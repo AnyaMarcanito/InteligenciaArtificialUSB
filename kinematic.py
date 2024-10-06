@@ -2,6 +2,8 @@ import random
 import math
 from vector import Vector
 
+def mapToRange(angle: float) -> float:
+    return (angle + math.pi) % (2 * math.pi) - math.pi
 class Kinematic:
     def __init__(self, position, orientation, velocity, rotation):
         self.position = position
@@ -172,10 +174,14 @@ class KinematicWander:
         self.maxRotation = maxRotation
 
     def getSteering(self):
-        result = SteeringOutput()
-        result.linear = self.character.orientationToVector(self.character.orientation) * self.maxSpeed
-        result.angular = (random.random() - 0.5) * self.maxRotation
+        result = KinematicSteeringOutput()
+        result.velocity = Kinematic.orientationToVector(self.character.orientation) * self.maxSpeed
+        self.character.orientation += (random.random() - 0.5) * self.maxRotation
+        result.velocity *= random.uniform(0.5, 1.5)
         return result
+
+    def randomBinomial(self):
+        return random.random() - random.random()
 
 class KinematicFlee:
     def __init__(self, character, target, maxSpeed):

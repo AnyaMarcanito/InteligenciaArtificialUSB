@@ -2,9 +2,10 @@ import pygame
 from visuals import verificar_colisiones
 
 def game_loop(pantalla, background, personajes, width, height, image_width, image_height, FPS):
-    wander, seek, arrive, flee, wander2 = personajes
+    wander, seek, arrive, flee, wander2, clow = personajes
     TIMER = pygame.time.Clock()
     running = True
+    margin = 20
 
     while running:
         for event in pygame.event.get():
@@ -13,7 +14,7 @@ def game_loop(pantalla, background, personajes, width, height, image_width, imag
 
         # Obtener el steering y actualizar la posición de los personajes
         steering_wander = wander.getSteering()
-        wander.character.update_with_steering(steering_wander, wander.maxSpeed, 1/FPS)
+        wander.character.update(steering_wander, 1/FPS)
 
         steering_seek = seek.getSteering()
         seek.character.update_with_steering(steering_seek, seek.maxAcceleration, 1/FPS)
@@ -26,7 +27,7 @@ def game_loop(pantalla, background, personajes, width, height, image_width, imag
         flee.character.update_with_steering(steering_flee, flee.maxAcceleration, 1/FPS)
 
         steering_wander2 = wander2.getSteering()
-        wander2.character.update_with_steering(steering_wander2, wander2.maxSpeed, 1/FPS)
+        wander2.character.update(steering_wander2, 1/FPS)
 
 
         # Verificar colisiones con los bordes de la pantalla para los personajes
@@ -41,10 +42,11 @@ def game_loop(pantalla, background, personajes, width, height, image_width, imag
 
         # Dibujar las imágenes de los personajes en sus posiciones actuales
         pantalla.blit(wander.image, (int(wander.character.position.x), int(wander.character.position.y)))
-        pantalla.blit(seek.image, (int(seek.character.position.x), int(seek.character.position.y)))
+        # pantalla.blit(seek.image, (int(seek.character.position.x), int(seek.character.position.y)))
         # pantalla.blit(arrive.image, (int(arrive.character.position.x), int(arrive.character.position.y)))
-        pantalla.blit(flee.image, (int(flee.character.position.x), int(flee.character.position.y)))
+        # pantalla.blit(flee.image, (int(flee.character.position.x), int(flee.character.position.y)))
         pantalla.blit(wander2.image, (int(wander2.character.position.x), int(wander2.character.position.y)))
+        pantalla.blit(clow, ((width - image_width) -margin , (height - image_height) - margin))
 
         pygame.display.flip()
         TIMER.tick(FPS)
