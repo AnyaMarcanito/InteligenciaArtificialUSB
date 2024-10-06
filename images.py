@@ -10,6 +10,7 @@ def cargar_imagenes():
     clowCard = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCard.png')
     clowCard = pygame.transform.scale(clowCard, (clowCard.get_width() // 2, clowCard.get_height() // 2))
     clow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clow.png')
+    spinelFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/spinelFlying.png')
     return {
         "sakuraFlying": sakuraFlying,
         "yueFlying": yueFlying,
@@ -17,5 +18,6 @@ def cargar_imagenes():
         "keroFlying": keroFlying,
         "background": background,
         "clowCard": clowCard,
-        "clow": clow
+        "clow": clow,
+        "spinelFlying": spinelFlying
     }

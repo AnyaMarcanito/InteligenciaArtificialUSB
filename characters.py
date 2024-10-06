@@ -1,5 +1,9 @@
 from vector import Vector
-from kinematic import Kinematic, Seek, Arrive, KinematicWander, Flee, Align
+from kinematic import Kinematic, KinematicWander
+from behaviors.align import Align
+from behaviors.arrive import Arrive
+from behaviors.flee import Flee
+from behaviors.seek import Seek
 
 def crear_personaje(posicion, velocidad, tipo, imagen, target_personaje=None):
     # Crear instancia de Kinematic para el personaje

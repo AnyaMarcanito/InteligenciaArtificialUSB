@@ -22,8 +22,8 @@ seek = crear_personaje(Vector(200, 200), Vector(0, 0), 'seek', imagenes["yueFlyi
 arrive = crear_personaje(Vector(300, 300), Vector(0, 0), 'arrive', imagenes["eriolFlying"], player)
 flee = crear_personaje(Vector(400, 400), Vector(0, 0), 'flee', imagenes["keroFlying"], player)
 wander2 = crear_personaje(Vector(500, 500), Vector(0, 0), 'wander', imagenes["clowCard"])
+align = crear_personaje(Vector(600, 100), Vector(0, 0), 'align', imagenes["spinelFlying"], player)  # Nueva instancia de align
 clow = imagenes["clow"]
-align = None  # No se usa en este ejemplo
 
 personajes = [wander, seek, arrive, flee, wander2, clow, align, player]
 
