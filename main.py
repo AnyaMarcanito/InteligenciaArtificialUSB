@@ -1,45 +1,31 @@
-from visuals import inicializar_pygame, configurar_pantalla, obtener_tamano_imagen
-from images import cargar_imagenes
-from game_loop import game_loop
+import pygame
 from characters import crear_personaje
 from vector import Vector
+from images import cargar_imagenes
+from game_loop import game_loop
 
-# Inicialización de Pygame
-inicializar_pygame()
-
-# Configuración de la pantalla y el reloj
-width, height = 960, 540
-pantalla = configurar_pantalla(width, height, 'Cardcaptor Sakura')
-FPS = 60
+# Inicialización de Pygame y creación de personajes
+pygame.init()
+width, height = 1280, 720
+pantalla = pygame.display.set_mode((width, height))
 
 # Cargar las imágenes
 imagenes = cargar_imagenes()
 background = imagenes["background"]
-sakuraFlying = imagenes["sakuraFlying"]
-yueFlying = imagenes["yueFlying"]
-eriolFlying = imagenes["eriolFlying"]
-keroFlying = imagenes["keroFlying"]
-clowCard = imagenes["clowCard"]
+
+# Crear el personaje del jugador
+player = crear_personaje(Vector(600, 600), Vector(0, 0), 'player', imagenes["sakuraFlying"])
+
+# Crear otros personajes con jugador como objetivo
+wander = crear_personaje(Vector(100, 100), Vector(0, 0), 'wander', imagenes["clowCard"])
+seek = crear_personaje(Vector(200, 200), Vector(0, 0), 'seek', imagenes["yueFlying"], player)
+arrive = crear_personaje(Vector(300, 300), Vector(0, 0), 'arrive', imagenes["eriolFlying"], player)
+flee = crear_personaje(Vector(400, 400), Vector(0, 0), 'flee', imagenes["keroFlying"], player)
+wander2 = crear_personaje(Vector(500, 500), Vector(0, 0), 'wander', imagenes["clowCard"])
 clow = imagenes["clow"]
+align = None  # No se usa en este ejemplo
 
-# Obtener el tamaño de las imágenes de los personajes
-image_width, image_height = obtener_tamano_imagen(sakuraFlying)
+personajes = [wander, seek, arrive, flee, wander2, clow, align, player]
 
-# Crear personajes
-wander = crear_personaje(Vector(0, 0), Vector(5, 0), 'wander', yueFlying)
-seek = crear_personaje(Vector(200, 200), Vector(10, 0), 'seek', sakuraFlying)
-arrive = crear_personaje(Vector(300, 300), Vector(0, 0), 'arrive', eriolFlying)
-flee = crear_personaje(Vector(400, 400), Vector(20, 0), 'flee', clowCard)
-wander = crear_personaje(Vector(0, 0), Vector(5, 0), 'wander', clowCard)
-wander2 = crear_personaje(Vector(400, 300), Vector(5, 0), 'wander', clowCard)
-
-# Ejecutar el bucle principal del juego
-personajes = (
-    wander, 
-    seek, 
-    arrive, 
-    flee, 
-    wander2, 
-    clow
-)
-game_loop(pantalla, background, personajes, width, height, image_width, image_height, FPS)
+# Iniciar el bucle del juego
+game_loop(pantalla, background, personajes, width, height, 50, 50, 60)
