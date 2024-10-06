@@ -1,31 +1,27 @@
 from vector import Vector
 from kinematic import Kinematic, Seek, Arrive, KinematicWander, Flee
 
-def crear_personajes():
-    # Crear instancias de Kinematic para los personajes
-    position_wander = Vector(100, 100)
-    velocity_wander = Vector(5, 0)
-    kinematic_wander = Kinematic(position_wander, 0, velocity_wander, 0)
+def crear_personaje(posicion, velocidad, tipo, imagen):
+    # Crear instancia de Kinematic para el personaje
+    kinematic = Kinematic(posicion, 0, velocidad, 0)
 
-    position_seek = Vector(200, 200)
-    velocity_seek = Vector(10, 0)
-    kinematic_seek = Kinematic(position_seek, 0, velocity_seek, 0)
+    # Crear el personaje según el tipo
+    if tipo == 'wander':
+        personaje = KinematicWander(kinematic, 200, 1.0)
+    elif tipo == 'seek':
+        seek_target = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0) 
+        personaje = Seek(kinematic, seek_target, 300)
+    elif tipo == 'arrive':
+        arrive_target = Kinematic(Vector(500, 500), 0, Vector(0, 0), 0) 
+        personaje = Arrive(kinematic, arrive_target, 10, 20, 5, 50) 
+    elif tipo == 'flee':
+        flee_target = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0) 
+        personaje = Flee(kinematic, flee_target, 0) 
+    else:
+        raise ValueError(f"Tipo de personaje desconocido: {tipo}")
+    
+    # Asignar la imagen al personaje
+    personaje.image = imagen
 
-    position_arrive = Vector(300, 300)
-    velocity_arrive = Vector(0, 0)
-    kinematic_arrive = Kinematic(position_arrive, 0, velocity_arrive, 0)
 
-    position_flee = Vector(400, 400)
-    velocity_flee = Vector(20, 0)
-    kinematic_flee = Kinematic(position_flee, 0, velocity_flee, 0)
-
-    # Crear instancias de los algoritmos de movimiento con valores aumentados
-    wander = KinematicWander(kinematic_wander, 200, 1.0)  # Aumentar maxSpeed y maxRotation
-    seek_target = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)  # Objetivo para Seek
-    seek = Seek(kinematic_seek, seek_target, 300)  # Aumentar maxAcceleration
-    arrive_target = Kinematic(Vector(500, 500), 0, Vector(0, 0), 0)  # Objetivo para Arrive
-    arrive = Arrive(kinematic_arrive, arrive_target, 10, 20, 5, 50)  # Aumentar maxAcceleration y maxSpeed
-    flee_target = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)  # Objetivo para Flee
-    flee = Flee(kinematic_flee, flee_target, 0)  # Aumentar maxAcceleration
-
-    return wander, seek, arrive, flee
+    return personaje
