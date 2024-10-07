@@ -11,6 +11,23 @@ def cargar_imagenes():
     clowCard = pygame.transform.scale(clowCard, (clowCard.get_width() // 2, clowCard.get_height() // 2))
     clow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clow.png')
     spinelFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/spinelFlying.png')
+
+    clowCardTheLight = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheLight.png')
+    clowCardTheLight = pygame.transform.scale(clowCardTheLight, (clowCardTheLight.get_width() // 2, clowCardTheLight.get_height() // 2))
+
+    clowCardTheDark = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheDark.png')
+    clowCardTheDark = pygame.transform.scale(clowCardTheDark, (clowCardTheDark.get_width() // 2, clowCardTheDark.get_height() // 2))
+
+    clowCardTheSleep = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheSleep.png')
+    clowCardTheSleep = pygame.transform.scale(clowCardTheSleep, (clowCardTheSleep.get_width() // 2, clowCardTheSleep.get_height() // 2))
+
+    clowCardTheFlower = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheFlower.png')
+    clowCardTheFlower = pygame.transform.scale(clowCardTheFlower, (clowCardTheFlower.get_width() // 2, clowCardTheFlower.get_height() // 2))
+
+    clowCardTheShadow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheShadow.png')
+    clowCardTheShadow = pygame.transform.scale(clowCardTheShadow, (clowCardTheShadow.get_width() // 2, clowCardTheShadow.get_height() // 2))
+    
+    background2 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background2.jpg', 1280, 720)
     return {
         "sakuraFlying": sakuraFlying,
         "yueFlying": yueFlying,
@@ -19,5 +36,11 @@ def cargar_imagenes():
         "background": background,
         "clowCard": clowCard,
         "clow": clow,
-        "spinelFlying": spinelFlying
+        "spinelFlying": spinelFlying,
+        "clowCardTheLight": clowCardTheLight,
+        "clowCardTheDark": clowCardTheDark,
+        "clowCardTheSleep": clowCardTheSleep,
+        "clowCardTheFlower": clowCardTheFlower,
+        "clowCardTheShadow": clowCardTheShadow,
+        "background2": background2
     }

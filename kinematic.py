@@ -1,5 +1,6 @@
 import random
 from vector import Vector
+from steering_output import SteeringOutput
 import math
 
 class Kinematic:
@@ -29,9 +30,10 @@ class Kinematic:
             self.velocity.normalize()
             self.velocity *= maxSpeed
 
-    def newOrientation(self, current, velocity):
+    @staticmethod
+    def newOrientation(current, velocity):
         if velocity.length() > 0:
-            return math.atan2(-velocity.x, velocity.y)
+            return math.atan2(velocity.y, velocity.x)
         else:
             return current
 
@@ -51,32 +53,33 @@ class KinematicSeek:
         self.maxSpeed = maxSpeed
 
     def getSteering(self):
-        result = SteeringOutput()
-        result.linear = self.target.position - self.character.position
-        result.linear.normalize()
-        result.linear *= self.maxSpeed
-        result.angular = 0
+        result = KinematicSteeringOutput()
+        result.velocity = self.target.position - self.character.position
+        result.velocity.normalize()
+        result.velocity *= self.maxSpeed
+        self.character.orientation = Kinematic.newOrientation(self.character.orientation, result.velocity)
+        result.rotation = 0
         return result
     
 class KinematicArrive:
-    def __init__(self, character, target, maxSpeed, radius):
+    def __init__(self, character, target, maxSpeed, radius, timeToTarget=0.25):
         self.character = character
         self.target = target
         self.maxSpeed = maxSpeed
         self.radius = radius
+        self.timeToTarget = timeToTarget
 
     def getSteering(self):
-        result = SteeringOutput()
-        direction = self.target.position - self.character.position
-        distance = direction.length()
-
-        if distance < self.radius:
+        result = KinematicSteeringOutput()
+        result.velocity = self.target.position - self.character.position
+        if result.velocity.length() < self.radius:
             return None
-
-        result.linear = direction
-        result.linear.normalize()
-        result.linear *= self.maxSpeed * (distance / self.radius)
-        result.angular = 0
+        result.velocity /= self.timeToTarget
+        if result.velocity.length() > self.maxSpeed:
+            result.velocity.normalize()
+            result.velocity *= self.maxSpeed
+        self.character.orientation = Kinematic.newOrientation(self.character.orientation, result.velocity)
+        result.rotation = 0
         return result
 
 class KinematicWander:
@@ -96,15 +99,42 @@ class KinematicWander:
         return random.random() - random.random()
 
 class KinematicFlee:
-    def __init__(self, character, target, maxSpeed):
+    def __init__(self, character, target, maxSpeed, fleeRadius):
         self.character = character
         self.target = target
         self.maxSpeed = maxSpeed
+        self.fleeRadius = fleeRadius
 
     def getSteering(self):
-        result = SteeringOutput()
-        result.linear = self.character.position - self.target.position
-        result.linear.normalize()
-        result.linear *= self.maxSpeed
-        result.angular = 0
+        result = KinematicSteeringOutput()
+        direction = self.character.position - self.target.position
+        distance = direction.length()
+        if distance > self.fleeRadius:
+            result.velocity = Vector(0, 0)  # Detener el movimiento si está fuera del fleeRadius
+            self.character.velocity = Vector(0, 0)  # Asegurarse de que la velocidad del personaje sea cero
+        else:
+            direction.normalize()
+            result.velocity = direction * self.maxSpeed
+            self.character.orientation = Kinematic.newOrientation(self.character.orientation, result.velocity)
+        result.rotation = 0
+        return result
+
+class KinematicSeekArrive:
+    def __init__(self, character, target, maxSpeed, arriveRadius):
+        self.character = character
+        self.target = target
+        self.maxSpeed = maxSpeed
+        self.arriveRadius = arriveRadius
+
+    def getSteering(self):
+        result = KinematicSteeringOutput()
+        direction = self.target.position - self.character.position
+        distance = direction.length()
+        if distance < self.arriveRadius:
+            result.velocity = direction * (self.maxSpeed * (distance / self.arriveRadius))
+        else:
+            direction.normalize()
+            result.velocity = direction * self.maxSpeed
+        self.character.orientation = Kinematic.newOrientation(self.character.orientation, result.velocity)
+        result.rotation = 0
         return result

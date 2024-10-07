@@ -25,6 +25,7 @@ class Vector:
         if length > 0:
             self.x /= length
             self.y /= length
+        return self
 
     def asVector(self):
         return Vector(math.cos(self.x), math.sin(self.y))
