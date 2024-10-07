@@ -1,5 +1,4 @@
 from behaviors.seek import Seek
-from steering_output import SteeringOutput
 from kinematic import Kinematic
 
 class Pursue(Seek):
@@ -26,7 +25,17 @@ class Pursue(Seek):
 
         # Create a temporary target for Seek to use.
         temp_target = Kinematic(explicitTarget, 0, self.target.velocity, 0)
+
+        # Save the original target
+        original_target = self.target
+
+        # Set the temporary target
         self.target = temp_target
 
         # 2. Delegate to seek.
-        return super().getSteering()
+        steering = super().getSteering()
+
+        # Restore the original target
+        self.target = original_target
+
+        return steering

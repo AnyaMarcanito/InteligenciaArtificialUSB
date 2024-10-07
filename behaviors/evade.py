@@ -1,6 +1,7 @@
 from behaviors.flee import Flee
 from steering_output import SteeringOutput
 from kinematic import Kinematic
+from vector import Vector
 
 class Evade(Flee):
     def __init__(self, character, target, maxAcceleration, maxPrediction, fleeRadius):
@@ -8,25 +9,43 @@ class Evade(Flee):
         self.maxPrediction = maxPrediction
 
     def getSteering(self):
-        # 1. Calculate the target to delegate to flee
-        direction = self.character.position - self.target.position
+        # Calcular la distancia al objetivo
+        direction = self.target.position - self.character.position
         distance = direction.length()
 
-        # Work out our current speed.
+        # Si el objetivo está fuera del radio de huida, devolver SteeringOutput con aceleraciones en cero
+        if distance > self.fleeRadius:
+            steering = SteeringOutput()
+            steering.linear = Vector(0, 0)
+            steering.angular = 0
+            self.character.velocity = Vector(0, 0)  # Detener la velocidad
+            return steering
+
+        # Calcular la velocidad actual del objetivo
         speed = self.character.velocity.length()
 
-        # Check if speed gives a reasonable prediction time.
+        # Calcular la predicción
         if speed <= distance / self.maxPrediction:
             prediction = self.maxPrediction
         else:
             prediction = distance / speed
 
-        # Put the target together.
-        explicitTarget = self.target.position + self.target.velocity * prediction
+        # Calcular el objetivo futuro
+        future_position = self.target.position + self.target.velocity * prediction
 
-        # Create a temporary target for Flee to use.
-        temp_target = Kinematic(explicitTarget, 0, self.target.velocity, 0)
+        # Crear un objetivo temporal para Flee
+        temp_target = Kinematic(future_position, 0, self.target.velocity, 0)
+
+        # Guardar el objetivo original
+        original_target = self.target
+
+        # Asignar el objetivo temporal
         self.target = temp_target
 
-        # 2. Delegate to flee.
-        return super().getSteering()
+        # Delegar a Flee
+        steering = super().getSteering()
+
+        # Restaurar el objetivo original
+        self.target = original_target
+
+        return steering

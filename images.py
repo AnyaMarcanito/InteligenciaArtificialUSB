@@ -3,6 +3,7 @@ from visuals import cargar_imagen
 
 def cargar_imagenes():
     sakuraFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/SakuritaVolando.png')
+    sakuraFlying2 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/SakuraFlying2.png')
     yueFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/yueFlying.png')
     eriolFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/eriolFlying.png')
     keroFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/kerberosFlying.png')
@@ -12,6 +13,9 @@ def cargar_imagenes():
     clow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clow.png')
     spinelFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/spinelFlying.png')
     keroFollow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/keroFollow.png')
+
+    sakuraCard = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/sakuraCard.png')
+    sakuraCard = pygame.transform.scale(sakuraCard, (sakuraCard.get_width() // 2, sakuraCard.get_height() // 2))
 
     clowCardTheLight = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheLight.png')
     clowCardTheLight = pygame.transform.scale(clowCardTheLight, (clowCardTheLight.get_width() // 2, clowCardTheLight.get_height() // 2))
@@ -47,5 +51,7 @@ def cargar_imagenes():
         "clowCardTheShadow": clowCardTheShadow,
         "background2": background2,
         "background3": background3,
-        "keroFollow": keroFollow
+        "keroFollow": keroFollow,
+        "sakuraCard": sakuraCard,
+        "sakuraFlying2": sakuraFlying2
     }
