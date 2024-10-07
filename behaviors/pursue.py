@@ -1,5 +1,6 @@
 from behaviors.seek import Seek
 from steering_output import SteeringOutput
+from kinematic import Kinematic
 
 class Pursue(Seek):
     def __init__(self, character, target, maxAcceleration, maxPrediction):

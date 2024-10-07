@@ -28,6 +28,8 @@ def cargar_imagenes():
     clowCardTheShadow = pygame.transform.scale(clowCardTheShadow, (clowCardTheShadow.get_width() // 2, clowCardTheShadow.get_height() // 2))
     
     background2 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background2.jpg', 1280, 720)
+    background3 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background3.jpg', 1280, 720)
+
     return {
         "sakuraFlying": sakuraFlying,
         "yueFlying": yueFlying,
@@ -42,5 +44,6 @@ def cargar_imagenes():
         "clowCardTheSleep": clowCardTheSleep,
         "clowCardTheFlower": clowCardTheFlower,
         "clowCardTheShadow": clowCardTheShadow,
-        "background2": background2
+        "background2": background2,
+        "background3": background3
     }

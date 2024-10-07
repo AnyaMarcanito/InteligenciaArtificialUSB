@@ -1,10 +1,10 @@
 from behaviors.flee import Flee
 from steering_output import SteeringOutput
-from kinematics.kinematic import Kinematic
+from kinematic import Kinematic
 
 class Evade(Flee):
-    def __init__(self, character, target, maxAcceleration, maxPrediction):
-        super().__init__(character, target, maxAcceleration)
+    def __init__(self, character, target, maxAcceleration, maxPrediction, fleeRadius):
+        super().__init__(character, target, maxAcceleration, fleeRadius)
         self.maxPrediction = maxPrediction
 
     def getSteering(self):
