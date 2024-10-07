@@ -6,10 +6,10 @@ class CombinedBehavior:
         self.behaviors = behaviors
 
     def getSteering(self):
-        combined_steering = SteeringOutput(Vector(0, 0), 0)
+        steering = SteeringOutput()
         for behavior in self.behaviors:
-            steering = behavior.getSteering()
-            if steering:
-                combined_steering.linear += steering.linear
-                combined_steering.angular += steering.angular
-        return combined_steering
+            behavior_steering = behavior.getSteering()
+            if behavior_steering:
+                steering.linear += behavior_steering.linear
+                steering.angular += behavior_steering.angular
+        return steering

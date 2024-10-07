@@ -11,6 +11,7 @@ def cargar_imagenes():
     clowCard = pygame.transform.scale(clowCard, (clowCard.get_width() // 2, clowCard.get_height() // 2))
     clow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clow.png')
     spinelFlying = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/spinelFlying.png')
+    keroFollow = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/keroFollow.png')
 
     clowCardTheLight = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/clowCardTheLight.png')
     clowCardTheLight = pygame.transform.scale(clowCardTheLight, (clowCardTheLight.get_width() // 2, clowCardTheLight.get_height() // 2))
@@ -45,5 +46,6 @@ def cargar_imagenes():
         "clowCardTheFlower": clowCardTheFlower,
         "clowCardTheShadow": clowCardTheShadow,
         "background2": background2,
-        "background3": background3
+        "background3": background3,
+        "keroFollow": keroFollow
     }

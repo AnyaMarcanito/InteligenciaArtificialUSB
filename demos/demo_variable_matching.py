@@ -10,10 +10,6 @@ from images import cargar_imagenes
 from kinematic import Kinematic
 from behaviors.align import Align
 from behaviors.velocity_match import VelocityMatch
-from behaviors.face import Face
-from behaviors.pursue import Pursue
-from behaviors.evade import Evade
-from behaviors.look_where_youre_going import LookWhereYoureGoing
 from behaviors.seek import Seek
 from behaviors.arrive import Arrive
 from behaviors.combine import CombinedBehavior
@@ -38,36 +34,21 @@ align_image = imagenes["eriolFlying"]
 velocity_match_kinematic = Kinematic(Vector(150, 150), 0, Vector(0, 0), 0)
 velocity_match_image = imagenes["spinelFlying"]
 
-face_kinematic = Kinematic(Vector(200, 200), 0, Vector(0, 0), 0)
-face_image = imagenes["keroFlying"]
-
-pursue_kinematic = Kinematic(Vector(250, 250), 0, Vector(0, 0), 0)
-pursue_image = imagenes["yueFlying"]
-
-evade_kinematic = Kinematic(Vector(300, 300), 0, Vector(0, 0), 0)
-evade_image = imagenes["clowCard"]
-
-look_where_youre_going_kinematic = Kinematic(Vector(350, 350), 0, Vector(0, 0), 0)
-look_where_youre_going_image = imagenes["clowCard"]
-
 # Asignar comportamientos
+
+# Eriol
 align_behavior = Align(align_kinematic, player_kinematic, maxAngularAcceleration=100, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
 seek_behavior = Seek(align_kinematic, player_kinematic, maxAcceleration=1000)
-combined_behavior = CombinedBehavior([seek_behavior, align_behavior])
+combined_behavior_align = CombinedBehavior([seek_behavior, align_behavior])
 
-velocity_match_behavior = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=10)
-face_behavior = Face(face_kinematic, player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
-pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=10, maxPrediction=1)
-evade_behavior = Evade(evade_kinematic, player_kinematic, maxAcceleration=10, maxPrediction=1, fleeRadius=300)
-look_where_youre_going_behavior = LookWhereYoureGoing(look_where_youre_going_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+# Spinel
+velocity_match_behavior_2 = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=1000)
+arrive_behavior_2 = Arrive(velocity_match_kinematic, player_kinematic, maxAcceleration=1000, maxSpeed=500, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
+combined_behavior_velocity_match = CombinedBehavior([velocity_match_behavior_2, arrive_behavior_2])
 
 personajes = [
-    (align_kinematic, align_image, combined_behavior),
-    (velocity_match_kinematic, velocity_match_image, velocity_match_behavior),
-    (face_kinematic, face_image, face_behavior),
-    (pursue_kinematic, pursue_image, pursue_behavior),
-    (evade_kinematic, evade_image, evade_behavior),
-    (look_where_youre_going_kinematic, look_where_youre_going_image, look_where_youre_going_behavior),
+    (align_kinematic, align_image, combined_behavior_align),
+    (velocity_match_kinematic, velocity_match_image, combined_behavior_velocity_match),
     (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
 ]
 
