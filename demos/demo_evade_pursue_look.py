@@ -10,6 +10,8 @@ from images import cargar_imagenes
 from kinematic import Kinematic
 from behaviors.pursue import Pursue
 from behaviors.evade import Evade
+from behaviors.look_where_youre_going import LookWhereYoureGoing
+from behaviors.combine import CombinedBehavior
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
@@ -38,18 +40,29 @@ new_pursue_image = imagenes["sakuraFlying2"]
 new_evade_kinematic = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)
 new_evade_image = imagenes["sakuraCard"]
 
-# Asignar comportamientos
+# Asignar comportamientos de movimiento
 pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=1000, maxPrediction=100)
 evade_behavior = Evade(evade_kinematic, player_kinematic, maxAcceleration=1000, maxPrediction=100, fleeRadius=300)
-
-# Asignar nuevos comportamientos
 new_pursue_behavior = Pursue(new_pursue_kinematic, new_evade_kinematic, maxAcceleration=500, maxPrediction=0.5)
 new_evade_behavior = Evade(new_evade_kinematic, new_pursue_kinematic, maxAcceleration=500, maxPrediction=0.5, fleeRadius=300)
+
+# Asignar comportamientos de orientación
+pursue_look_behavior = LookWhereYoureGoing(pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+evade_look_behavior = LookWhereYoureGoing(evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+new_pursue_look_behavior = LookWhereYoureGoing(new_pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+new_evade_look_behavior = LookWhereYoureGoing(new_evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+
+# Combinar comportamientos de movimiento y orientación
+pursue_combined_behavior = CombinedBehavior([pursue_behavior, pursue_look_behavior])
+evade_combined_behavior = CombinedBehavior([evade_behavior, evade_look_behavior])
+new_pursue_combined_behavior = CombinedBehavior([new_pursue_behavior, new_pursue_look_behavior])
+new_evade_combined_behavior = CombinedBehavior([new_evade_behavior, new_evade_look_behavior])
+
 personajes = [
-    (pursue_kinematic, pursue_image, pursue_behavior),
-    (evade_kinematic, evade_image, evade_behavior),
-    (new_pursue_kinematic, new_pursue_image, new_pursue_behavior),
-    (new_evade_kinematic, new_evade_image, new_evade_behavior),
+    (pursue_kinematic, pursue_image, pursue_combined_behavior),
+    (evade_kinematic, evade_image, evade_combined_behavior),
+    (new_pursue_kinematic, new_pursue_image, new_pursue_combined_behavior),
+    (new_evade_kinematic, new_evade_image, new_evade_combined_behavior),
     (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
 ]
 
