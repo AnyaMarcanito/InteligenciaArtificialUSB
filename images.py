@@ -35,6 +35,8 @@ def cargar_imagenes():
     background2 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background2.jpg', 1280, 720)
     background3 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background3.jpg', 1280, 720)
     background4 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background4.png', 1280, 720)
+    symbol = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/SakuraSymbol.png')
+    symbol = pygame.transform.scale(symbol, (symbol.get_width() // 5, symbol.get_height() // 5))
 
     return {
         "sakuraFlying": sakuraFlying,
@@ -55,5 +57,6 @@ def cargar_imagenes():
         "keroFollow": keroFollow,
         "sakuraCard": sakuraCard,
         "sakuraFlying2": sakuraFlying2,
-        "background4": background4
+        "background4": background4,
+        "symbol": symbol
     }

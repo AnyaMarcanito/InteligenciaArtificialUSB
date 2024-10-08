@@ -30,6 +30,9 @@ class Kinematic:
             self.velocity.normalize()
             self.velocity *= maxSpeed
 
+        # Actualizar la orientación del personaje
+        self.orientation = self.newOrientation(self.orientation, self.velocity)
+
     @staticmethod
     def newOrientation(current, velocity):
         if velocity.length() > 0:

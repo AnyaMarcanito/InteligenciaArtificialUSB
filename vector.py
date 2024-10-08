@@ -29,3 +29,6 @@ class Vector:
 
     def asVector(self):
         return Vector(math.cos(self.x), math.sin(self.y))
+    
+    def dot(self, other):
+        return self.x * other.x + self.y * other.y

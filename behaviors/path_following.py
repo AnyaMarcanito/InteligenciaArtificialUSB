@@ -1,7 +1,6 @@
 from behaviors.seek import Seek
-from steering_output import SteeringOutput
-from behaviors.path import Path
-from kinematics.kinematic import Kinematic
+from kinematic import Kinematic
+from vector import Vector
 
 class FollowPath(Seek):
     def __init__(self, character, path, pathOffset, maxAcceleration):

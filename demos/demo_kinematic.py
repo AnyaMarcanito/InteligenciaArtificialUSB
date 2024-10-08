@@ -53,7 +53,7 @@ wander_behavior3 = KinematicWander(wander_kinematic3, maxSpeed=100, maxRotation=
 wander_behavior4 = KinematicWander(wander_kinematic4, maxSpeed=100, maxRotation=1)
 wander_behavior5 = KinematicWander(wander_kinematic5, maxSpeed=100, maxRotation=1)
 seek_behavior = KinematicSeek(seek_kinematic, player_kinematic, maxSpeed=100)
-arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=100, radius=80)
+arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=100, radius=10)
 flee_behavior = KinematicFlee(flee_kinematic, player_kinematic, maxSpeed=80, fleeRadius=300)  # Ajustar fleeRadius
 # seek_arrive_behavior = KinematicSeekArrive(seek_arrive_kinematic, player_kinematic, maxSpeed=100, arriveRadius=50)  # Ajustar arriveRadius
 
