@@ -1,8 +1,10 @@
 from behaviors.align import Align
 from steering_output import SteeringOutput
-from vector import Vector
 import math
-
+class Target:
+    def __init__(self, position):
+        self.position = position
+        self.orientation = 0
 class Face(Align):
     def __init__(self, character, target, maxAngularAcceleration, maxRotation, targetRadius, slowRadius, timeToTarget=0.1):
         super().__init__(character, target, maxAngularAcceleration, maxRotation, targetRadius, slowRadius, timeToTarget)

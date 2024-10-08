@@ -1,87 +1,74 @@
 import pygame
 import sys
 import os
+import math
 
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from vector import Vector
-from images import cargar_imagenes
 from kinematic import Kinematic
 from behaviors.face import Face
-from behaviors.pursue import Pursue
-from behaviors.combine import CombinedBehavior
+from images import cargar_imagenes
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
 width, height = 1280, 720
 pantalla = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Demo Face Behavior")
 
 # Cargar las imágenes
 imagenes = cargar_imagenes()
-background = imagenes["background4"]
+background = imagenes["background2"]
+player_image = imagenes["sakuraFlying"]
+card_image = imagenes["clowCard"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
-player_image = imagenes["sakuraFlying"]
 
-# Crear personajes que usarán los comportamientos Face y Pursue
-face_kinematics = [
-    Kinematic(Vector(0, 0), 0, Vector(0, 0), 0),
-    Kinematic(Vector(1200, 650), 0, Vector(0, 0), 0),
-    Kinematic(Vector(0, 650), 0, Vector(0, 0), 0),
-    Kinematic(Vector(1200, 0), 0, Vector(0, 0), 0),
-    Kinematic(Vector(1200, 300), 0, Vector(0, 0), 0)
+# Crear personajes adicionales cercanos a las esquinas
+corner_positions = [
+    Vector(50, 50),
+    Vector(width - 50, 50),
+    Vector(50, height - 50),
+    Vector(width - 50, height - 50)
 ]
+corner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in corner_positions]
 
-face_images = [
-    imagenes["yueFlying"],
-    imagenes["yueFlying"],
-    imagenes["yueFlying"],
-    imagenes["yueFlying"],
-    imagenes["yueFlying"]
+# Crear personajes adicionales ubicados más hacia adentro (norte, sur, este y oeste)
+inner_positions = [
+    Vector(width / 2, 50),         # Norte
+    Vector(width / 2, height - 50), # Sur
+    Vector(50, height / 2),         # Oeste
+    Vector(width - 50, height / 2)  # Este
 ]
+inner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in inner_positions]
 
-face_behaviors = [
-    CombinedBehavior([Pursue(face_kinematics[0], player_kinematic, maxAcceleration=100, maxPrediction=1), Face(face_kinematics[0], player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)]),
-    CombinedBehavior([Pursue(face_kinematics[1], player_kinematic, maxAcceleration=100, maxPrediction=1), Face(face_kinematics[1], player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)]),
-    CombinedBehavior([Pursue(face_kinematics[2], player_kinematic, maxAcceleration=100, maxPrediction=1), Face(face_kinematics[2], player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)]),
-    CombinedBehavior([Pursue(face_kinematics[3], player_kinematic, maxAcceleration=100, maxPrediction=1), Face(face_kinematics[3], player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)]),
-    CombinedBehavior([Pursue(face_kinematics[4], player_kinematic, maxAcceleration=100, maxPrediction=1), Face(face_kinematics[4], player_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)])
-]
+# Combinar todas las kinematics
+all_kinematics = corner_kinematics + inner_kinematics
 
-personajes = [
-    (face_kinematics[0], face_images[0], face_behaviors[0]),
-    (face_kinematics[1], face_images[1], face_behaviors[1]),
-    (face_kinematics[2], face_images[2], face_behaviors[2]),
-    (face_kinematics[3], face_images[3], face_behaviors[3]),
-    (face_kinematics[4], face_images[4], face_behaviors[4]),
-    (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
-]
+# Crear comportamientos Face para todos los personajes adicionales
+face_behaviors = [Face(kinematic, player_kinematic, maxAngularAcceleration=5, maxRotation=math.pi, targetRadius=0.1, slowRadius=math.pi / 4) for kinematic in all_kinematics]
 
-# Función para actualizar la posición del jugador con el mouse
-def actualizar_posicion_jugador(evento, jugador):
-    if evento.type == pygame.MOUSEMOTION:
-        jugador.position = Vector(evento.pos[0], evento.pos[1])
+# Función para rotar una imagen
+def rotar_imagen(image, angle):
+    rotated_image = pygame.transform.rotate(image, angle)
+    new_rect = rotated_image.get_rect(center=image.get_rect(topleft=(0, 0)).center)
+    return rotated_image, new_rect
 
-# Función para verificar colisiones con los bordes de la pantalla
-def verificar_colisiones_con_bordes(kinematic, width, height):
-    if kinematic.position.x < 0:
-        kinematic.position.x = 0
-        kinematic.velocity.x = -kinematic.velocity.x
-    elif kinematic.position.x > width:
-        kinematic.position.x = width
-        kinematic.velocity.x = -kinematic.velocity.x
-
-    if kinematic.position.y < 0:
-        kinematic.position.y = 0
-        kinematic.velocity.y = -kinematic.velocity.y
-    elif kinematic.position.y > height:
-        kinematic.position.y = height
-        kinematic.velocity.y = -kinematic.velocity.y
+# Función para dibujar un triángulo isósceles que representa al personaje
+def dibujar_triangulo(pantalla, color, kinematic, size=20):
+    # Calcular los vértices del triángulo isósceles
+    p1 = (kinematic.position.x + size * math.cos(kinematic.orientation),
+          kinematic.position.y + size * math.sin(kinematic.orientation))
+    p2 = (kinematic.position.x + size * math.cos(kinematic.orientation + 5 * math.pi / 6),
+          kinematic.position.y + size * math.sin(kinematic.orientation + 5 * math.pi / 6))
+    p3 = (kinematic.position.x + size * math.cos(kinematic.orientation - 5 * math.pi / 6),
+          kinematic.position.y + size * math.sin(kinematic.orientation - 5 * math.pi / 6))
+    pygame.draw.polygon(pantalla, color, [p1, p2, p3])
 
 # Iniciar el bucle del juego
-def game_loop(pantalla, background, personajes, width, height, fps):
+def game_loop(pantalla, background, player_image, card_image, width, height, fps):
     clock = pygame.time.Clock()
     running = True
 
@@ -89,17 +76,29 @@ def game_loop(pantalla, background, personajes, width, height, fps):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            actualizar_posicion_jugador(event, player_kinematic)
 
+        # Obtener la posición del cursor
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        player_kinematic.position = Vector(mouse_x, mouse_y)
+
+        # Actualizar el comportamiento de Face de todos los personajes adicionales
+        for i, kinematic in enumerate(all_kinematics):
+            steering = face_behaviors[i].getSteering()
+            if steering:
+                kinematic.update_with_steering(steering, maxSpeed=0, time=1/fps)  # maxSpeed=0 para no cambiar la velocidad
+
+        # Dibujar el fondo
         pantalla.blit(background, (0, 0))
 
-        for kinematic, image, behavior in personajes:
-            if behavior:
-                steering = behavior.getSteering()
-                if steering:
-                    kinematic.update_with_steering(steering, maxSpeed=500, time=1/fps)  # Asegúrate de pasar maxSpeed
-            verificar_colisiones_con_bordes(kinematic, width, height)
-            pantalla.blit(image, (kinematic.position.x, kinematic.position.y))
+        # Dibujar el personaje principal
+        pantalla.blit(player_image, (player_kinematic.position.x - player_image.get_width() // 2, player_kinematic.position.y - player_image.get_height() // 2))
+
+        # Dibujar los personajes adicionales con rotación
+        for kinematic in all_kinematics:
+            angle = -math.degrees(kinematic.orientation)  # Convertir la orientación a grados y hacerla negativa para la rotación correcta
+            rotated_image, new_rect = rotar_imagen(card_image, angle)
+            pantalla.blit(rotated_image, (kinematic.position.x - new_rect.width // 2, kinematic.position.y - new_rect.height // 2))
+            dibujar_triangulo(pantalla, (0, 0, 0), kinematic)
 
         pygame.display.flip()
         clock.tick(fps)
@@ -107,4 +106,4 @@ def game_loop(pantalla, background, personajes, width, height, fps):
     pygame.quit()
 
 # Ejecutar el bucle del juego
-game_loop(pantalla, background, personajes, width, height, 60)
+game_loop(pantalla, background, player_image, card_image, width, height, 60)
