@@ -23,25 +23,26 @@ imagenes = cargar_imagenes()
 background = imagenes["background2"]
 player_image = imagenes["sakuraFlying"]
 card_image = imagenes["clowCard"]
+frame = imagenes["frame"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
 
 # Crear personajes adicionales cercanos a las esquinas
 corner_positions = [
-    Vector(50, 50),
-    Vector(width - 50, 50),
-    Vector(50, height - 50),
-    Vector(width - 50, height - 50)
+    Vector(200, 200),
+    Vector(width - 200, 200),
+    Vector(200, height - 200),
+    Vector(width - 200, height - 200)
 ]
 corner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in corner_positions]
 
 # Crear personajes adicionales
 inner_positions = [
-    Vector(width / 2, 50),         # Esquina Norte
-    Vector(width / 2, height - 50), # Esquina Sur
-    Vector(50, height / 2),         # Esquina Oeste
-    Vector(width - 50, height / 2)  # Esquina Este
+    Vector(width / 2, 100),         # Esquina Norte
+    Vector(width / 2, height - 100), # Esquina Sur
+    Vector(100, height / 2),         # Esquina Oeste
+    Vector(width - 100, height / 2)  # Esquina Este
 ]
 inner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in inner_positions]
 
@@ -85,6 +86,7 @@ def game_loop(pantalla, background, player_image, card_image, fps):
                 kinematic.update_with_steering(steering, maxSpeed=0, time=1/fps)
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
         pantalla.blit(player_image, (player_kinematic.position.x - player_image.get_width() // 2, player_kinematic.position.y - player_image.get_height() // 2))
 
         # Dibujar los personajes adicionales con rotación

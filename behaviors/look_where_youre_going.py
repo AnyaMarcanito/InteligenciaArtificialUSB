@@ -1,6 +1,4 @@
 from behaviors.align import Align
-from steering_output import SteeringOutput
-from vector import Vector
 import math
 
 class LookWhereYoureGoing(Align):

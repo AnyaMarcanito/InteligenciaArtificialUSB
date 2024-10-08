@@ -21,8 +21,8 @@ pantalla = pygame.display.set_mode((width, height))
 
 # Cargar las imágenes
 imagenes = cargar_imagenes()
-background = imagenes["background"]
 background2 = imagenes["background2"]
+frame = imagenes["frame"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
@@ -89,6 +89,7 @@ def game_loop(pantalla, background, personajes, width, height, fps):
             actualizar_posicion_jugador(event, player_kinematic)
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
 
         for kinematic, image, behavior in personajes:
             if behavior:

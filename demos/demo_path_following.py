@@ -22,6 +22,7 @@ pantalla = pygame.display.set_mode((width, height))
 imagenes = cargar_imagenes()
 background = imagenes["background3"]
 symbol_image = imagenes["symbol"]
+frame = imagenes["frame"]
 
 # Crear el personaje
 character_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
@@ -60,6 +61,7 @@ def game_loop(pantalla, background, personajes, symbol_image, width, height, fps
                 running = False
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
 
         # Dibujar la imagen symbol en el centro de la ventana
         symbol_rect = symbol_image.get_rect(center=(width // 2 + 30, height // 2 + 10))

@@ -37,7 +37,7 @@ def cargar_imagenes():
     background4 = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/background4.png', 1280, 720)
     symbol = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/SakuraSymbol.png')
     symbol = pygame.transform.scale(symbol, (symbol.get_width() // 5, symbol.get_height() // 5))
-
+    frame = cargar_imagen('D:/Desktop/IA/Proyectos/Proyecto1/InteligenciaArtificialUSB/assets/frame.png', 1280, 720)
     return {
         "sakuraFlying": sakuraFlying,
         "yueFlying": yueFlying,
@@ -58,5 +58,6 @@ def cargar_imagenes():
         "sakuraCard": sakuraCard,
         "sakuraFlying2": sakuraFlying2,
         "background4": background4,
-        "symbol": symbol
+        "symbol": symbol,
+        "frame": frame
     }

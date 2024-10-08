@@ -22,6 +22,7 @@ pantalla = pygame.display.set_mode((width, height))
 # Cargar las imágenes
 imagenes = cargar_imagenes()
 background = imagenes["background3"]
+frame = imagenes["frame"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
@@ -79,6 +80,7 @@ def game_loop(pantalla, background, personajes, width, height, fps):
             actualizar_posicion_jugador(event, player_kinematic)
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
 
         # Dibujar el círculo alrededor del jugador
         pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
