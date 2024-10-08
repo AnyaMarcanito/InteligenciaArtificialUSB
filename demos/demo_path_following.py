@@ -10,7 +10,8 @@ from vector import Vector
 from images import cargar_imagenes
 from kinematic import Kinematic
 from behaviors.path_following import FollowPath
-from behaviors.path import Path  # Importar la clase Path
+from behaviors.path import Path
+from utils.utils import verificar_colisiones_con_bordes
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
@@ -20,7 +21,7 @@ pantalla = pygame.display.set_mode((width, height))
 # Cargar las imágenes
 imagenes = cargar_imagenes()
 background = imagenes["background3"]
-symbol_image = imagenes["symbol"]  # Asegúrate de que la imagen "symbol" esté cargada en cargar_imagenes()
+symbol_image = imagenes["symbol"]
 
 # Crear el personaje
 character_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
@@ -29,7 +30,7 @@ character_image = imagenes["keroFollow"]
 # Definir la ruta (circunferencia centrada)
 circle_radius = 200
 center_x, center_y = width // 2, height // 2
-num_points = 100  # Número de puntos para aproximar la circunferencia
+num_points = 100
 
 path_points = [
     Vector(
@@ -39,7 +40,6 @@ path_points = [
     for i in range(num_points)
 ]
 
-# Crear una instancia de Path
 path = Path(path_points)
 
 # Asignar el comportamiento FollowPath
@@ -48,22 +48,6 @@ path_following_behavior = FollowPath(character_kinematic, path, pathOffset=1, ma
 personajes = [
     (character_kinematic, character_image, path_following_behavior)
 ]
-
-# Función para verificar colisiones con los bordes de la pantalla
-def verificar_colisiones_con_bordes(kinematic, width, height):
-    if kinematic.position.x < 0:
-        kinematic.position.x = 0
-        kinematic.velocity.x = -kinematic.velocity.x
-    elif kinematic.position.x > width:
-        kinematic.position.x = width
-        kinematic.velocity.x = -kinematic.velocity.x
-
-    if kinematic.position.y < 0:
-        kinematic.position.y = 0
-        kinematic.velocity.y = -kinematic.velocity.y
-    elif kinematic.position.y > height:
-        kinematic.position.y = height
-        kinematic.velocity.y = -kinematic.velocity.y
 
 # Iniciar el bucle del juego
 def game_loop(pantalla, background, personajes, symbol_image, width, height, fps):

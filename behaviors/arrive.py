@@ -1,5 +1,4 @@
 from steering_output import SteeringOutput
-from vector import Vector
 
 class Arrive:
     def __init__(self, character, target, maxAcceleration, maxSpeed, targetRadius, slowRadius, timeToTarget=0.1):

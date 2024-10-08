@@ -10,6 +10,7 @@ from vector import Vector
 from kinematic import Kinematic
 from behaviors.face import Face
 from images import cargar_imagenes
+from utils.utils import actualizar_posicion_jugador
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
@@ -35,16 +36,15 @@ corner_positions = [
 ]
 corner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in corner_positions]
 
-# Crear personajes adicionales ubicados más hacia adentro (norte, sur, este y oeste)
+# Crear personajes adicionales
 inner_positions = [
-    Vector(width / 2, 50),         # Norte
-    Vector(width / 2, height - 50), # Sur
-    Vector(50, height / 2),         # Oeste
-    Vector(width - 50, height / 2)  # Este
+    Vector(width / 2, 50),         # Esquina Norte
+    Vector(width / 2, height - 50), # Esquina Sur
+    Vector(50, height / 2),         # Esquina Oeste
+    Vector(width - 50, height / 2)  # Esquina Este
 ]
 inner_kinematics = [Kinematic(pos, 0, Vector(0, 0), 0) for pos in inner_positions]
 
-# Combinar todas las kinematics
 all_kinematics = corner_kinematics + inner_kinematics
 
 # Crear comportamientos Face para todos los personajes adicionales
@@ -57,7 +57,7 @@ def rotar_imagen(image, angle):
     return rotated_image, new_rect
 
 # Función para dibujar un triángulo isósceles que representa al personaje
-def dibujar_triangulo(pantalla, color, kinematic, size=20):
+def dibujar_triangulo(pantalla, color, kinematic, size=10):
     # Calcular los vértices del triángulo isósceles
     p1 = (kinematic.position.x + size * math.cos(kinematic.orientation),
           kinematic.position.y + size * math.sin(kinematic.orientation))
@@ -68,7 +68,7 @@ def dibujar_triangulo(pantalla, color, kinematic, size=20):
     pygame.draw.polygon(pantalla, color, [p1, p2, p3])
 
 # Iniciar el bucle del juego
-def game_loop(pantalla, background, player_image, card_image, width, height, fps):
+def game_loop(pantalla, background, player_image, card_image, fps):
     clock = pygame.time.Clock()
     running = True
 
@@ -76,26 +76,20 @@ def game_loop(pantalla, background, player_image, card_image, width, height, fps
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
-        # Obtener la posición del cursor
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        player_kinematic.position = Vector(mouse_x, mouse_y)
+            actualizar_posicion_jugador(event, player_kinematic)
 
         # Actualizar el comportamiento de Face de todos los personajes adicionales
         for i, kinematic in enumerate(all_kinematics):
             steering = face_behaviors[i].getSteering()
             if steering:
-                kinematic.update_with_steering(steering, maxSpeed=0, time=1/fps)  # maxSpeed=0 para no cambiar la velocidad
+                kinematic.update_with_steering(steering, maxSpeed=0, time=1/fps)
 
-        # Dibujar el fondo
         pantalla.blit(background, (0, 0))
-
-        # Dibujar el personaje principal
         pantalla.blit(player_image, (player_kinematic.position.x - player_image.get_width() // 2, player_kinematic.position.y - player_image.get_height() // 2))
 
         # Dibujar los personajes adicionales con rotación
         for kinematic in all_kinematics:
-            angle = -math.degrees(kinematic.orientation)  # Convertir la orientación a grados y hacerla negativa para la rotación correcta
+            angle = -math.degrees(kinematic.orientation)
             rotated_image, new_rect = rotar_imagen(card_image, angle)
             pantalla.blit(rotated_image, (kinematic.position.x - new_rect.width // 2, kinematic.position.y - new_rect.height // 2))
             dibujar_triangulo(pantalla, (0, 0, 0), kinematic)
@@ -106,4 +100,4 @@ def game_loop(pantalla, background, player_image, card_image, width, height, fps
     pygame.quit()
 
 # Ejecutar el bucle del juego
-game_loop(pantalla, background, player_image, card_image, width, height, 60)
+game_loop(pantalla, background, player_image, card_image, 60)

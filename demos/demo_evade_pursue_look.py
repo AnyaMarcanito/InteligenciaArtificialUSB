@@ -12,6 +12,7 @@ from behaviors.pursue import Pursue
 from behaviors.evade import Evade
 from behaviors.look_where_youre_going import LookWhereYoureGoing
 from behaviors.combine import CombinedBehavior
+from utils.utils import verificar_colisiones_con_bordes, actualizar_posicion_jugador
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
@@ -41,8 +42,8 @@ new_evade_kinematic = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)
 new_evade_image = imagenes["sakuraCard"]
 
 # Asignar comportamientos de movimiento
-pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=1000, maxPrediction=100)
-evade_behavior = Evade(evade_kinematic, player_kinematic, maxAcceleration=1000, maxPrediction=100, fleeRadius=300)
+pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=500, maxPrediction=100)
+evade_behavior = Evade(evade_kinematic, player_kinematic, maxAcceleration=500, maxPrediction=100, fleeRadius=300)
 new_pursue_behavior = Pursue(new_pursue_kinematic, new_evade_kinematic, maxAcceleration=500, maxPrediction=0.5)
 new_evade_behavior = Evade(new_evade_kinematic, new_pursue_kinematic, maxAcceleration=500, maxPrediction=0.5, fleeRadius=300)
 
@@ -66,27 +67,6 @@ personajes = [
     (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
 ]
 
-# Función para actualizar la posición del jugador con el mouse
-def actualizar_posicion_jugador(evento, jugador):
-    if evento.type == pygame.MOUSEMOTION:
-        jugador.position = Vector(evento.pos[0], evento.pos[1])
-
-# Función para verificar colisiones con los bordes de la pantalla
-def verificar_colisiones_con_bordes(kinematic, width, height):
-    if kinematic.position.x < 0:
-        kinematic.position.x = 0
-        kinematic.velocity.x = -kinematic.velocity.x
-    elif kinematic.position.x > width:
-        kinematic.position.x = width
-        kinematic.velocity.x = -kinematic.velocity.x
-
-    if kinematic.position.y < 0:
-        kinematic.position.y = 0
-        kinematic.velocity.y = -kinematic.velocity.y
-    elif kinematic.position.y > height:
-        kinematic.position.y = height
-        kinematic.velocity.y = -kinematic.velocity.y
-
 # Iniciar el bucle del juego
 def game_loop(pantalla, background, personajes, width, height, fps):
     clock = pygame.time.Clock()
@@ -101,7 +81,7 @@ def game_loop(pantalla, background, personajes, width, height, fps):
         pantalla.blit(background, (0, 0))
 
         # Dibujar el círculo alrededor del jugador
-        pygame.draw.circle(pantalla, (255, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
+        pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
 
         for kinematic, image, behavior in personajes:
             if behavior:

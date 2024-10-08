@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import math
 
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -13,6 +14,7 @@ from behaviors.velocity_match import VelocityMatch
 from behaviors.seek import Seek
 from behaviors.arrive import Arrive
 from behaviors.combine import CombinedBehavior
+from utils.utils import verificar_colisiones_con_bordes, actualizar_posicion_jugador
 
 # Inicialización de Pygame y configuración de la pantalla
 pygame.init()
@@ -35,7 +37,6 @@ velocity_match_kinematic = Kinematic(Vector(150, 150), 0, Vector(0, 0), 0)
 velocity_match_image = imagenes["spinelFlying"]
 
 # Asignar comportamientos
-
 # Eriol
 align_behavior = Align(align_kinematic, player_kinematic, maxAngularAcceleration=100, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
 seek_behavior = Seek(align_kinematic, player_kinematic, maxAcceleration=1000)
@@ -49,29 +50,19 @@ combined_behavior_velocity_match = CombinedBehavior([velocity_match_behavior_2, 
 personajes = [
     (align_kinematic, align_image, combined_behavior_align),
     (velocity_match_kinematic, velocity_match_image, combined_behavior_velocity_match),
-    (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
+    (player_kinematic, player_image, None)
 ]
 
-# Función para actualizar la posición del jugador con el mouse
-def actualizar_posicion_jugador(evento, jugador):
-    if evento.type == pygame.MOUSEMOTION:
-        jugador.position = Vector(evento.pos[0], evento.pos[1])
-
-# Función para verificar colisiones con los bordes de la pantalla
-def verificar_colisiones_con_bordes(kinematic, width, height):
-    if kinematic.position.x < 0:
-        kinematic.position.x = 0
-        kinematic.velocity.x = -kinematic.velocity.x
-    elif kinematic.position.x > width:
-        kinematic.position.x = width
-        kinematic.velocity.x = -kinematic.velocity.x
-
-    if kinematic.position.y < 0:
-        kinematic.position.y = 0
-        kinematic.velocity.y = -kinematic.velocity.y
-    elif kinematic.position.y > height:
-        kinematic.position.y = height
-        kinematic.velocity.y = -kinematic.velocity.y
+# Función para dibujar un triángulo isósceles que representa al personaje
+def dibujar_triangulo(pantalla, color, kinematic, size=10):
+    # Calcular los vértices del triángulo isósceles
+    p1 = (kinematic.position.x + size * math.cos(kinematic.orientation),
+          kinematic.position.y + size * math.sin(kinematic.orientation))
+    p2 = (kinematic.position.x + size * math.cos(kinematic.orientation + 5 * math.pi / 6),
+          kinematic.position.y + size * math.sin(kinematic.orientation + 5 * math.pi / 6))
+    p3 = (kinematic.position.x + size * math.cos(kinematic.orientation - 5 * math.pi / 6),
+          kinematic.position.y + size * math.sin(kinematic.orientation - 5 * math.pi / 6))
+    pygame.draw.polygon(pantalla, color, [p1, p2, p3])
 
 # Iniciar el bucle del juego
 def game_loop(pantalla, background, personajes, width, height, fps):
@@ -92,7 +83,8 @@ def game_loop(pantalla, background, personajes, width, height, fps):
                 if steering:
                     kinematic.update_with_steering(steering, maxSpeed=100, time=1/fps)
             verificar_colisiones_con_bordes(kinematic, width, height)
-            pantalla.blit(image, (kinematic.position.x, kinematic.position.y))
+            pantalla.blit(image, (kinematic.position.x - image.get_width() // 2, kinematic.position.y - image.get_height() // 2))
+            dibujar_triangulo(pantalla, (0, 0, 0), kinematic)
 
         pygame.display.flip()
         clock.tick(fps)
