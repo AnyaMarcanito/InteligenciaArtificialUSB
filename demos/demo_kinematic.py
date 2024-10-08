@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import random
 
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,48 +18,50 @@ pygame.init()
 width, height = 1280, 720
 center_x, center_y = width // 2, height // 2
 center = Vector(center_x, center_y)
-flee_radius = 350
+flee_radius = 300
+arrive_radius = 50
 pantalla = pygame.display.set_mode((width, height))
 
 # Cargar las imágenes
 imagenes = cargar_imagenes()
 background = imagenes["background"]
 frame = imagenes["frame"]
+player_image = imagenes["sakuraFlying"]
+wander_image = imagenes["clowCard"]
+seek_image = imagenes["yueFlying"]
+arrive_image = imagenes["eriolFlying"]
+flee_image = imagenes["keroFlying"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
-player_image = imagenes["sakuraFlying"]
 
 # Crear otros personajes con jugador como objetivo
-wander_kinematic1 = Kinematic(center, 0, Vector(0, 0), 0)
-wander_kinematic2 = Kinematic(center, 0, Vector(0, 0), 0)
-wander_kinematic3 = Kinematic(center, 0, Vector(0, 0), 0)
-wander_kinematic4 = Kinematic(center, 0, Vector(0, 0), 0)
-wander_kinematic5 = Kinematic(center, 0, Vector(0, 0), 0)
-wander_image = imagenes["clowCard"]
+wander_kinematics = []
+for _ in range(5):
+    random_x = random.randint(0, width - 1)
+    random_y = random.randint(0, height - 1)
+    wander_kinematic = Kinematic(Vector(random_x, random_y), 0, Vector(0, 0), 0)
+    wander_kinematics.append(wander_kinematic)
 
-seek_kinematic = Kinematic(Vector(350, 350), 0, Vector(0, 0), 0)
-seek_image = imagenes["yueFlying"]
-
-arrive_kinematic = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)
-arrive_image = imagenes["eriolFlying"]
-
-flee_kinematic = Kinematic(Vector(450, 450), 0, Vector(0, 0), 0)
-flee_image = imagenes["keroFlying"]
-
-# Nueva instancia para KinematicSeekArrive
-seek_arrive_kinematic = Kinematic(Vector(500, 500), 0, Vector(0, 0), 0)
-seek_arrive_image = imagenes["spinelFlying"]
+seek_kinematic = Kinematic(Vector(0, 0), 0, Vector(0, 0), 0)
+arrive_kinematic = Kinematic(Vector(width-100, 0), 0, Vector(0, 0), 0)
+flee_kinematic = Kinematic(center, 0, Vector(0, 0), 0)
 
 # Asignar comportamientos
+wander_kinematic1 = wander_kinematics[0]
+wander_kinematic2 = wander_kinematics[1]
+wander_kinematic3 = wander_kinematics[2]
+wander_kinematic4 = wander_kinematics[3]
+wander_kinematic5 = wander_kinematics[4]
+
 wander_behavior1 = KinematicWander(wander_kinematic1, maxSpeed=50, maxRotation=1)
 wander_behavior2 = KinematicWander(wander_kinematic2, maxSpeed=50, maxRotation=1)
 wander_behavior3 = KinematicWander(wander_kinematic3, maxSpeed=50, maxRotation=1)
 wander_behavior4 = KinematicWander(wander_kinematic4, maxSpeed=50, maxRotation=1)
 wander_behavior5 = KinematicWander(wander_kinematic5, maxSpeed=50, maxRotation=1)
-seek_behavior = KinematicSeek(seek_kinematic, player_kinematic, maxSpeed=50)
-arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=50, radius=10)
-flee_behavior = KinematicFlee(flee_kinematic, player_kinematic, maxSpeed=100, fleeRadius=flee_radius)
+seek_behavior = KinematicSeek(seek_kinematic, player_kinematic, maxSpeed=40)
+arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=40, radius=arrive_radius)
+flee_behavior = KinematicFlee(flee_kinematic, player_kinematic, maxSpeed=40, fleeRadius=flee_radius)
 
 personajes = [
     (wander_kinematic1, wander_image, wander_behavior1),
@@ -87,7 +90,7 @@ def game_loop(pantalla, background, personajes, width, height, fps):
         pantalla.blit(frame, (0, 0))
 
         # Dibujar el radio de fuga alrededor del jugador
-        pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), flee_radius-50, 1)
+        # pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), flee_radius-50, 1)
 
         for kinematic, image, behavior in personajes:
             if behavior:

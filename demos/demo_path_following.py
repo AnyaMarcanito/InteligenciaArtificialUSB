@@ -35,7 +35,7 @@ num_points = 100
 
 path_points = [
     Vector(
-        center_x + circle_radius * math.cos(2 * math.pi * i / num_points),
+        center_x + circle_radius * math.cos(2 * math.pi * i / num_points)-50,
         center_y + circle_radius * math.sin(2 * math.pi * i / num_points)
     )
     for i in range(num_points)
@@ -64,7 +64,7 @@ def game_loop(pantalla, background, personajes, symbol_image, width, height, fps
         pantalla.blit(frame, (0, 0))
 
         # Dibujar la imagen symbol en el centro de la ventana
-        symbol_rect = symbol_image.get_rect(center=(width // 2 + 30, height // 2 + 10))
+        symbol_rect = symbol_image.get_rect(center=(width // 2 , height // 2 ))
         pantalla.blit(symbol_image, symbol_rect.topleft)
 
         for kinematic, image, behavior in personajes:

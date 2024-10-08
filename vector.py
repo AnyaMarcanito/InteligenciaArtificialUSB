@@ -32,3 +32,8 @@ class Vector:
     
     def dot(self, other):
         return self.x * other.x + self.y * other.y
+    
+    def __iadd__(self, other):
+        self.x += other.x
+        self.y += other.y
+        return self

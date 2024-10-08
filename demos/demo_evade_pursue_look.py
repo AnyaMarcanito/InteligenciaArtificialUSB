@@ -21,26 +21,23 @@ pantalla = pygame.display.set_mode((width, height))
 
 # Cargar las imágenes
 imagenes = cargar_imagenes()
-background = imagenes["background3"]
+background = imagenes["background5"]
 frame = imagenes["frame"]
+player_image = imagenes["sakuraFlying"]
+pursue_image = imagenes["keroFollow"]
+evade_image = imagenes["spinelFlying"]
+new_pursue_image = imagenes["sakuraFlying2"]
+new_evade_image = imagenes["sakuraCard"]
 
 # Crear el personaje del jugador
 player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
-player_image = imagenes["sakuraFlying"]
 
-# Crear otros personajes con jugador como objetivo
 pursue_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
-pursue_image = imagenes["keroFollow"]
-
 evade_kinematic = Kinematic(Vector(300, 300), 0, Vector(0, 0), 0)
-evade_image = imagenes["spinelFlying"]
 
 # Crear nuevas instancias de Kinematic
 new_pursue_kinematic = Kinematic(Vector(200, 200), 0, Vector(0, 0), 0)
-new_pursue_image = imagenes["sakuraFlying2"]
-
 new_evade_kinematic = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)
-new_evade_image = imagenes["sakuraCard"]
 
 # Asignar comportamientos de movimiento
 pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=500, maxPrediction=100)
@@ -65,7 +62,7 @@ personajes = [
     (evade_kinematic, evade_image, evade_combined_behavior),
     (new_pursue_kinematic, new_pursue_image, new_pursue_combined_behavior),
     (new_evade_kinematic, new_evade_image, new_evade_combined_behavior),
-    (player_kinematic, player_image, None)  # El jugador no tiene comportamiento
+    (player_kinematic, player_image, None) 
 ]
 
 # Iniciar el bucle del juego
@@ -83,7 +80,7 @@ def game_loop(pantalla, background, personajes, width, height, fps):
         pantalla.blit(frame, (0, 0))
 
         # Dibujar el círculo alrededor del jugador
-        pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
+        # pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
 
         for kinematic, image, behavior in personajes:
             if behavior:
