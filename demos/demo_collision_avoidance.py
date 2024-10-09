@@ -19,7 +19,8 @@ def inicializar_juego():
     pantalla = pygame.display.set_mode((width, height))
     imagenes = cargar_imagenes()
     background = imagenes["background"]
-    return pantalla, background, imagenes, width, height
+    frame = imagenes["frame"]
+    return pantalla, background, frame, imagenes, width, height
 
 def crear_personajes(imagenes):
     player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
@@ -30,14 +31,14 @@ def crear_personajes(imagenes):
         kinematic = Kinematic(Vector(center_x, center_y), 0, Vector(0, 0), 0)
         image = imagenes["clowCard"]
         wander_behavior = Wander(kinematic, wanderOffset=5, wanderRadius=10, wanderRate=1, maxAcceleration=1000)
-        avoidance_behavior = CollisionAvoidance(kinematic, [p[0] for p in personajes], maxAcceleration=1000, radius=10)
+        avoidance_behavior = CollisionAvoidance(kinematic, [p[0] for p in personajes if p[0] != kinematic], maxAcceleration=1000, radius=10)
         combined_behavior = CombinedBehavior([wander_behavior, avoidance_behavior])
         personajes.append((kinematic, image, combined_behavior))
 
     personajes.append((player_kinematic, player_image, None))
     return personajes, player_kinematic
 
-def game_loop(pantalla, background, personajes, player_kinematic, width, height, fps):
+def game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, fps):
     clock = pygame.time.Clock()
     running = True
 
@@ -48,13 +49,14 @@ def game_loop(pantalla, background, personajes, player_kinematic, width, height,
             actualizar_posicion_jugador(event, player_kinematic)
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
 
         for kinematic, image, behavior in personajes:
             if behavior:
                 steering = behavior.getSteering()
                 if steering:
                     kinematic.update_with_steering(steering, maxSpeed=80, time=1/fps)
-            verificar_colisiones_con_bordes(kinematic, width, height)
+            verificar_colisiones_con_bordes(kinematic, width-50, height-50)
             pantalla.blit(image, (kinematic.position.x, kinematic.position.y))
 
         pygame.display.flip()
@@ -63,7 +65,7 @@ def game_loop(pantalla, background, personajes, player_kinematic, width, height,
     pygame.quit()
 
 if __name__ == "__main__":
-    pantalla, background, imagenes, width, height = inicializar_juego()
+    pantalla, background, frame, imagenes, width, height = inicializar_juego()
     center_x, center_y = width // 2, height // 2
     personajes, player_kinematic = crear_personajes(imagenes)
-    game_loop(pantalla, background, personajes, player_kinematic, width, height, 60)
+    game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, 60)

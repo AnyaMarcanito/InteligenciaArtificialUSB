@@ -47,5 +47,5 @@ class CollisionAvoidance:
 
         relative_position = relative_position.normalize()
 
-        steering: SteeringOutput = SteeringOutput(linear=relative_position * -self.maxAcceleration*100, angular=10)
+        steering: SteeringOutput = SteeringOutput(linear=relative_position * -self.maxAcceleration, angular=10)
         return steering

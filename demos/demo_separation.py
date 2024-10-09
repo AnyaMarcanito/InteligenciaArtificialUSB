@@ -11,7 +11,6 @@ from images import cargar_imagenes
 from kinematic import Kinematic
 from behaviors.separation import Separation
 from behaviors.arrive import Arrive
-from behaviors.velocity_match import VelocityMatch
 from behaviors.combine import CombinedBehavior
 from utils.utils import actualizar_posicion_jugador, verificar_colisiones_con_bordes
 
@@ -21,7 +20,8 @@ def inicializar_juego():
     pantalla = pygame.display.set_mode((width, height))
     imagenes = cargar_imagenes()
     background = imagenes["background6"]
-    return pantalla, background, imagenes, width, height
+    frame = imagenes["frame"]
+    return pantalla, background, imagenes, width, height, frame
 
 def crear_personajes(imagenes):
     player_kinematic = Kinematic(Vector(600, 600), 0, Vector(0, 0), 0)
@@ -31,16 +31,15 @@ def crear_personajes(imagenes):
     for i in range(10):
         kinematic = Kinematic(Vector(random.randint(0, width), random.randint(0, height)), 0, Vector(0, 0), 0)
         image = imagenes["clowCard"]
-        separation_behavior = Separation(kinematic, [p[0] for p in personajes], player_kinematic, maxAcceleration=100, threshold=100, decayCoefficient=0.5)
-        seek_behavior = Arrive(kinematic, player_kinematic, maxAcceleration=100, maxSpeed=80, targetRadius=100, slowRadius=200, timeToTarget=0.1)
-        velocity_matching_behavior = VelocityMatch(kinematic, player_kinematic, maxAcceleration=100)
-        combined_behavior = CombinedBehavior([separation_behavior, seek_behavior, velocity_matching_behavior])
+        separation_behavior = Separation(kinematic, [p[0] for p in personajes if p[0] != kinematic], player_kinematic, maxAcceleration=1000, threshold=50, decayCoefficient=1)        
+        arrive_behavior = Arrive(kinematic, player_kinematic, maxAcceleration=20, maxSpeed=500, targetRadius=50, slowRadius=200, timeToTarget=0.1)
+        combined_behavior = CombinedBehavior([separation_behavior, arrive_behavior])
         personajes.append((kinematic, image, combined_behavior))
 
     personajes.append((player_kinematic, player_image, None))
     return personajes, player_kinematic
 
-def game_loop(pantalla, background, personajes, player_kinematic, width, height, fps):
+def game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, fps):
     clock = pygame.time.Clock()
     running = True
 
@@ -51,6 +50,7 @@ def game_loop(pantalla, background, personajes, player_kinematic, width, height,
             actualizar_posicion_jugador(event, player_kinematic)
 
         pantalla.blit(background, (0, 0))
+        pantalla.blit(frame, (0, 0))
 
         for kinematic, image, behavior in personajes:
             if behavior:
@@ -66,7 +66,7 @@ def game_loop(pantalla, background, personajes, player_kinematic, width, height,
     pygame.quit()
 
 if __name__ == "__main__":
-    pantalla, background, imagenes, width, height = inicializar_juego()
+    pantalla, background, imagenes, width, height, frame = inicializar_juego()
     center_x, center_y = width // 2, height // 2
     personajes, player_kinematic = crear_personajes(imagenes)
-    game_loop(pantalla, background, personajes, player_kinematic, width, height, 60)
+    game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, 60)
