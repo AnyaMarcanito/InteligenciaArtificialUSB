@@ -68,9 +68,9 @@ def crear_personajes(width, height):
         (wander_kinematic_shadow, wander_image_shadow, wander_behavior_shadow),
         (wander_kinematic_sleep, wander_image_sleep, wander_behavior_sleep),
         (wander_kinematic_flower, wander_image_flower, wander_behavior_flower),
-        # (seek_kinematic, seek_image, seek_behavior),
-        # (arrive_kinematic, arrive_image, arrive_behavior),
-        # (flee_kinematic, flee_image, flee_behavior),
+        (seek_kinematic, seek_image, seek_behavior),
+        (arrive_kinematic, arrive_image, arrive_behavior),
+        (flee_kinematic, flee_image, flee_behavior),
         (player_kinematic, player_image, None) 
     ]
 
