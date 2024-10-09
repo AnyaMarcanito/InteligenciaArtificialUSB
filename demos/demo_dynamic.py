@@ -1,34 +1,29 @@
+import pygame
 import sys
 import os
-import pygame
 import random
+import math
+
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from vector import Vector
 from images import cargar_imagenes
+from kinematic import Kinematic
+from behaviors.wander import Wander
 from behaviors.seek import Seek
 from behaviors.arrive import Arrive
 from behaviors.flee import Flee
-from behaviors.wander import Wander
-from kinematic import Kinematic
 from utils.utils import verificar_colisiones_con_bordes, actualizar_posicion_jugador
 
-# Esta demo muestra cómo se pueden combinar varios comportamientos para que los personajes
-# realicen diferentes acciones en función de la situación. En este caso, se crean varios
-# personajes que siguen al jugador, se alejan de él o se mueven de forma aleatoria por la pantalla, 
-# siendo todos estos comportamientos dinámicos.
-
-# Función para inicializar el juego
 def inicializar_juego():
-    # Variables
-    width, height = 1280, 720
     # Inicialización de Pygame y configuración de la pantalla
     pygame.init()
+    width, height = 1280, 720
     pantalla = pygame.display.set_mode((width, height))
     return pantalla, width, height
 
-# Funcion para crear los personajes del juego y cargar las imagenes
-def crear_personajes():
+def crear_personajes(width, height):
     # Cargar las imágenes
     imagenes = cargar_imagenes()
     background2 = imagenes["background2"]
@@ -73,18 +68,26 @@ def crear_personajes():
         (wander_kinematic_shadow, wander_image_shadow, wander_behavior_shadow),
         (wander_kinematic_sleep, wander_image_sleep, wander_behavior_sleep),
         (wander_kinematic_flower, wander_image_flower, wander_behavior_flower),
-        (seek_kinematic, seek_image, seek_behavior),
-        (arrive_kinematic, arrive_image, arrive_behavior),
-        (flee_kinematic, flee_image, flee_behavior),
+        # (seek_kinematic, seek_image, seek_behavior),
+        # (arrive_kinematic, arrive_image, arrive_behavior),
+        # (flee_kinematic, flee_image, flee_behavior),
         (player_kinematic, player_image, None) 
     ]
+
     return background2, frame, personajes, player_kinematic
 
-# Función para el bucle principal del juego
+def dibujar_triangulo(pantalla, color, kinematic, size=15):
+    angle = kinematic.orientation
+    p1 = (kinematic.position.x + size * math.cos(angle), kinematic.position.y + size * math.sin(angle))
+    p2 = (kinematic.position.x + size * math.cos(angle + 2.5), kinematic.position.y + size * math.sin(angle + 2.5))
+    p3 = (kinematic.position.x + size * math.cos(angle - 2.5), kinematic.position.y + size * math.sin(angle - 2.5))
+    pygame.draw.polygon(pantalla, color, [p1, p2, p3])
+
 def game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, fps):
     clock = pygame.time.Clock()
     running = True
     maxSpeed = 200
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -93,7 +96,7 @@ def game_loop(pantalla, background, frame, personajes, player_kinematic, width, 
 
         pantalla.blit(background, (0, 0))
         pantalla.blit(frame, (0, 0))
-        # Actualizar la posición de los personajes-------------------------------------------
+
         for kinematic, image, behavior in personajes:
             if behavior:
                 steering = behavior.getSteering()
@@ -102,13 +105,15 @@ def game_loop(pantalla, background, frame, personajes, player_kinematic, width, 
             # Verificar colisiones
             verificar_colisiones_con_bordes(kinematic, width, height)
             pantalla.blit(image, (kinematic.position.x, kinematic.position.y))
+            if isinstance(behavior, Wander):
+                dibujar_triangulo(pantalla, (0, 0, 0), kinematic)
 
         pygame.display.flip()
         clock.tick(fps)
+
     pygame.quit()
 
-# Ejecutar el demo de movimientos dinámicos
 if __name__ == "__main__":
     pantalla, width, height = inicializar_juego()
-    background, frame, personajes, player_kinematic = crear_personajes()
+    background, frame, personajes, player_kinematic = crear_personajes(width, height)
     game_loop(pantalla, background, frame, personajes, player_kinematic, width, height, 60)

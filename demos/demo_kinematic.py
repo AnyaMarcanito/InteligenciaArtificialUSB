@@ -44,13 +44,13 @@ def crear_personajes(width, height):
         wander_kinematics.append(wander_kinematic)
 
     seek_kinematic = Kinematic(Vector(0, 0), 0, Vector(0, 0), 0)
-    arrive_kinematic = Kinematic(Vector(width-100, 0), 0, Vector(0, 0), 0)
+    arrive_kinematic = Kinematic(Vector(0, 0), 0, Vector(0, 0), 0)
     flee_kinematic = Kinematic(Vector(width // 2, height // 2), 0, Vector(0, 0), 0)
 
     # Asignar comportamientos
     wander_behaviors = [KinematicWander(wander_kinematic, maxSpeed=50, maxRotation=1) for wander_kinematic in wander_kinematics]
-    seek_behavior = KinematicSeek(seek_kinematic, player_kinematic, maxSpeed=40)
-    arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=40, radius=50)
+    seek_behavior = KinematicSeek(seek_kinematic, player_kinematic, maxSpeed=100)
+    arrive_behavior = KinematicArrive(arrive_kinematic, player_kinematic, maxSpeed=10, radius=50)
     flee_behavior = KinematicFlee(flee_kinematic, player_kinematic, maxSpeed=40, fleeRadius=300)
 
     # Añadir los personajes a la lista de personajes

@@ -37,8 +37,8 @@ pursue_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
 evade_kinematic = Kinematic(Vector(300, 300), 0, Vector(0, 0), 0)
 
 # Crear nuevas instancias de Kinematic
-new_pursue_kinematic = Kinematic(Vector(200, 200), 0, Vector(0, 0), 0)
-new_evade_kinematic = Kinematic(Vector(400, 400), 0, Vector(0, 0), 0)
+new_pursue_kinematic = Kinematic(Vector(0, 0), 0, Vector(0, 0), 0)
+new_evade_kinematic = Kinematic(Vector(200, 200), 0, Vector(0, 0), 0)
 
 # Asignar comportamientos de movimiento
 pursue_behavior = Pursue(pursue_kinematic, player_kinematic, maxAcceleration=500, maxPrediction=100)

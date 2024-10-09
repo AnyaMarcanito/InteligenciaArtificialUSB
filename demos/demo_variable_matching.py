@@ -43,7 +43,7 @@ def crear_personajes():
     align_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
     align_image = imagenes["eriolFlying"]
 
-    velocity_match_kinematic = Kinematic(Vector(150, 150), 0, Vector(0, 0), 0)
+    velocity_match_kinematic = Kinematic(Vector(0, 0), 0, Vector(10, 10), 0)
     velocity_match_image = imagenes["spinelFlying"]
 
     # Asignar comportamientos
@@ -53,8 +53,8 @@ def crear_personajes():
     combined_behavior_align = CombinedBehavior([seek_behavior, align_behavior])
 
     # Spinel
-    velocity_match_behavior_2 = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=100)
-    arrive_behavior_2 = Arrive(velocity_match_kinematic, player_kinematic, maxAcceleration=100, maxSpeed=500, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
+    velocity_match_behavior_2 = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=500)
+    arrive_behavior_2 = Arrive(velocity_match_kinematic, player_kinematic, maxAcceleration=500, maxSpeed=500, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
     combined_behavior_velocity_match = CombinedBehavior([velocity_match_behavior_2, arrive_behavior_2])
 
     personajes = [
@@ -96,7 +96,7 @@ def game_loop(pantalla, background, frame, personajes, width, height, fps, playe
             # Verificar colisiones
             verificar_colisiones_con_bordes(kinematic, width, height)
             pantalla.blit(image, (kinematic.position.x - image.get_width() // 2, kinematic.position.y - image.get_height() // 2))
-            dibujar_triangulo(pantalla, (0, 0, 0), kinematic)
+            dibujar_triangulo(pantalla, '#d3cc00', kinematic)
         pygame.display.flip()
         clock.tick(fps)
     pygame.quit()

@@ -33,6 +33,7 @@ def crear_personajes(width, height):
 
     # Crear el personaje
     character_kinematic = Kinematic(Vector(100, 100), 0, Vector(0, 0), 0)
+    # character_kinematic = Kinematic(Vector(width/2, height/2), 0, Vector(0, 0), 0)
     character_image = imagenes["keroFollow"]
 
     # Definir la ruta (circunferencia centrada)

@@ -27,7 +27,7 @@ class VelocityMatch:
     def getSteering(self):
         result = SteeringOutput()
         # Calcular la aceleración lineal para igualar la velocidad del objetivo.
-        result.linear = self.target.velocity - self.character.velocity
+        result.linear = self.character.velocity - self.target.velocity
         # Ajustar la aceleración en función del tiempo objetivo
         result.linear /= self.timeToTarget
         # Verificar si la aceleración es demasiado rápida y si lo es ajustarla.
