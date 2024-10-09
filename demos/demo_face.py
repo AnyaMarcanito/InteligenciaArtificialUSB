@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 import math
-import random  # Importar el módulo random
+import random
 
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

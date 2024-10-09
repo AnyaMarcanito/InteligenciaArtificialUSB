@@ -40,12 +40,12 @@ velocity_match_image = imagenes["spinelFlying"]
 # Asignar comportamientos
 # Eriol
 align_behavior = Align(align_kinematic, player_kinematic, maxAngularAcceleration=100, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
-seek_behavior = Seek(align_kinematic, player_kinematic, maxAcceleration=1000)
+seek_behavior = Seek(align_kinematic, player_kinematic, maxAcceleration=100)
 combined_behavior_align = CombinedBehavior([seek_behavior, align_behavior])
 
 # Spinel
-velocity_match_behavior_2 = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=1000)
-arrive_behavior_2 = Arrive(velocity_match_kinematic, player_kinematic, maxAcceleration=1000, maxSpeed=500, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
+velocity_match_behavior_2 = VelocityMatch(velocity_match_kinematic, player_kinematic, maxAcceleration=100)
+arrive_behavior_2 = Arrive(velocity_match_kinematic, player_kinematic, maxAcceleration=100, maxSpeed=500, targetRadius=0.1, slowRadius=1, timeToTarget=0.5)
 combined_behavior_velocity_match = CombinedBehavior([velocity_match_behavior_2, arrive_behavior_2])
 
 personajes = [

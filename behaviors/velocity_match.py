@@ -1,4 +1,3 @@
-from vector import Vector
 from steering_output import SteeringOutput
 
 class VelocityMatch:

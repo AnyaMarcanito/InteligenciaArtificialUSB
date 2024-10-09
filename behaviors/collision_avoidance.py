@@ -1,66 +1,51 @@
-from vector import Vector
+from typing import List
+from pygame.math import Vector2
+from kinematic import Kinematic
 from steering_output import SteeringOutput
-from kinematics.kinematic import Kinematic
-import math
 
 class CollisionAvoidance:
-    def __init__(self, character, targets, maxAcceleration, radius):
-        self.character = character
-        self.targets = targets
-        self.maxAcceleration = maxAcceleration
-        self.radius = radius
+    def __init__(self, character: Kinematic, targets: List[Kinematic], maxAcceleration: float, radius: float):
+        self.character: Kinematic = character
+        self.targets: List[Kinematic] = targets
+        self.maxAcceleration: float = maxAcceleration
+        self.radius: float = radius
 
-    def getSteering(self):
-        # 1. Find the target that’s closest to collision
-        shortestTime = float('inf')
+    def getSteering(self) -> SteeringOutput:
+        shortest_time: float = float('inf')
+        first_target: Kinematic = None
+        first_min_separation: float = 0
+        first_distance: float = 0
+        first_relative_position: Vector2 = None
+        first_relative_velocity: Vector2 = None
 
-        # Store the target that collides then, and other data that we will need and can avoid recalculating.
-        firstTarget = None
-        firstMinSeparation = None
-        firstDistance = None
-        firstRelativePos = None
-        firstRelativeVel = None
-
-        # Loop through each target.
         for target in self.targets:
-            # Calculate the time to collision.
-            relativePos = target.position - self.character.position
-            relativeVel = target.velocity - self.character.velocity
-            relativeSpeed = relativeVel.length()
-            timeToCollision = relativePos.dot(relativeVel) / (relativeSpeed * relativeSpeed)
+            relative_position: Vector2 = target.position - self.character.position
+            relative_velocity: Vector2 = target.velocity - self.character.velocity
+            relative_speed: float = relative_velocity.length()
+            time_to_collision: float = relative_position.dot(relative_velocity) / (relative_speed ** 2) if relative_speed != 0 else float('inf')
 
-            # Check if it is going to be a collision at all.
-            distance = relativePos.length()
-            minSeparation = distance - relativeSpeed * timeToCollision
-            if minSeparation > 2 * self.radius:
+            distance: float = relative_position.length()
+            min_separation: float = distance - relative_speed * time_to_collision
+            if min_separation > 2 * self.radius:
                 continue
 
-            # Check if it is the shortest.
-            if 0 < timeToCollision < shortestTime:
-                # Store the time, target and other data.
-                shortestTime = timeToCollision
-                firstTarget = target
-                firstMinSeparation = minSeparation
-                firstDistance = distance
-                firstRelativePos = relativePos
-                firstRelativeVel = relativeVel
+            if time_to_collision > 0 and time_to_collision < shortest_time:
+                shortest_time = time_to_collision
+                first_target = target
+                first_min_separation = min_separation
+                first_distance = distance
+                first_relative_position = relative_position
+                first_relative_velocity = relative_velocity
 
-        # 2. Calculate the steering
-        # If we have no target, then exit.
-        if not firstTarget:
-            return None
-
-        # If we’re going to hit exactly, or if we’re already colliding, then do the steering based on current position.
-        if firstMinSeparation <= 0 or firstDistance < 2 * self.radius:
-            relativePos = firstTarget.position - self.character.position
-        # Otherwise calculate the future relative position.
+        if first_target is None:
+            return SteeringOutput()
+        
+        if first_min_separation <= 0 or first_distance < 2 * self.radius:
+            relative_position = first_target.position - self.character.position
         else:
-            relativePos = firstRelativePos + firstRelativeVel * shortestTime
+            relative_position = first_relative_position + first_relative_velocity * shortest_time
 
-        # Avoid the target.
-        relativePos = relativePos.normalize()
+        relative_position = relative_position.normalize()
 
-        result = SteeringOutput()
-        result.linear = relativePos * self.maxAcceleration
-        result.angular = 0
-        return result
+        steering: SteeringOutput = SteeringOutput(linear=relative_position * -self.maxAcceleration*100, angular=10)
+        return steering

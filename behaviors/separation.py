@@ -1,35 +1,35 @@
-from vector import Vector
+from typing import List
+from kinematic import Kinematic
 from steering_output import SteeringOutput
-from kinematics.kinematic import Kinematic
+from vector import Vector
 
 class Separation:
-    def __init__(self, character, targets, maxAcceleration, threshold, decayCoefficient):
-        self.character = character
-        self.targets = targets
-        self.maxAcceleration = maxAcceleration
-        self.threshold = threshold
-        self.decayCoefficient = decayCoefficient
+    def __init__(self, character: Kinematic, targets: List[Kinematic], player: Kinematic, maxAcceleration: float, threshold: float, decayCoefficient: float, timeToTarget: float = 0.1):
+        self.character: Kinematic = character
+        self.targets: List[Kinematic] = targets
+        self.player: Kinematic = player
+        self.maxAcceleration: float = maxAcceleration
+        self.threshold: float = threshold
+        self.decayCoefficient: float = decayCoefficient
+        self.timeToTarget: float = timeToTarget
 
-    def getSteering(self):
-        result = SteeringOutput()
+    def getSteering(self) -> SteeringOutput:
+        steering: SteeringOutput = SteeringOutput()
+        steering.linear = Vector(0, 0)
 
-        # Loop through each target.
         for target in self.targets:
-            # Check if the target is close.
-            direction = target.position - self.character.position
-            distance = direction.length()
+            direction: Vector = self.character.position - target.position
+            distance: float = direction.length()  # Usamos el método length() definido
 
-            if distance < self.threshold:
-                # Calculate the strength of repulsion (using the inverse square law).
-                strength = min(self.decayCoefficient / (distance * distance), self.maxAcceleration)
-
-                # Add the acceleration.
+            # Evitamos la división por cero
+            if distance > 0.0001:  # Un valor muy pequeño para evitar divisiones por cero
+                strength: float = min(self.decayCoefficient / (distance ** 2), self.maxAcceleration)
                 direction = direction.normalize()
-                result.linear += strength * direction
+                steering.linear += direction.__mul__(strength)
 
-        # Ensure the result does not exceed maxAcceleration.
-        if result.linear.length() > self.maxAcceleration:
-            result.linear = result.linear.normalize() * self.maxAcceleration
+        # Limitamos la aceleración
+        if steering.linear.length() > self.maxAcceleration:
+            steering.linear = steering.linear.normalize() * self.maxAcceleration
 
-        result.angular = 0
-        return result
+        steering.angular = 0
+        return steering

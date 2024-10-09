@@ -1,4 +1,3 @@
-from vector import Vector
 from steering_output import SteeringOutput
 
 class CombinedBehavior:
@@ -12,4 +11,11 @@ class CombinedBehavior:
             if behavior_steering:
                 steering.linear += behavior_steering.linear
                 steering.angular += behavior_steering.angular
+
+        # Normalizar el vector linear si su magnitud excede el maxAcceleration
+        if steering.linear.length() > self.behaviors[0].maxAcceleration:
+            steering.linear = steering.linear.normalize() * self.behaviors[0].maxAcceleration
+
         return steering
+    
+    
