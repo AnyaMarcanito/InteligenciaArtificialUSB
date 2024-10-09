@@ -1,5 +1,6 @@
 import math
 
+# Clase Vector y metodos para operaciones con vectores
 class Vector:
     def __init__(self, x, y):
         self.x = x

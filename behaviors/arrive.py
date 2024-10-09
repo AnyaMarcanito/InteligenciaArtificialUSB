@@ -1,6 +1,28 @@
 from steering_output import SteeringOutput
 
 class Arrive:
+    """
+    El comportamiento Arrive calcula la salida de dirección para que un agente llegue a una posición objetivo.
+    Atributos:
+        character: Kinematic.
+            El agente que se está moviendo.
+        target: Kinematic.
+            La posición objetivo hacia la que se mueve el agente.
+        maxAcceleration: float.
+            La aceleración máxima que puede alcanzar el agente.
+        maxSpeed: float.
+            La velocidad máxima que puede alcanzar el agente.
+        targetRadius: float.
+            El radio alrededor del objetivo donde se considera que el agente ha llegado.
+        slowRadius: float.
+            El radio alrededor del objetivo donde el agente comienza a desacelerar.
+        timeToTarget: float.
+            El tiempo durante el cual se debe alcanzar la velocidad objetivo (por defecto es 0.1).
+    Métodos:
+        getSteering():
+            Calcula y devuelve la salida de dirección para que el agente llegue a la posición objetivo.
+            Devuelve None si el agente está dentro del targetRadius.
+    """
     def __init__(self, character, target, maxAcceleration, maxSpeed, targetRadius, slowRadius, timeToTarget=0.1):
         self.character = character
         self.target = target
@@ -12,35 +34,31 @@ class Arrive:
 
     def getSteering(self):
         result = SteeringOutput()
-
-        # Get the direction to the target.
+        # Conseguir la dirección y la distancia al objetivo.
         direction = self.target.position - self.character.position
         distance = direction.length()
-
-        # Check if we are there, return no steering.
+        # Si estamos dentro del targetRadius, no es necesario hacer nada.
         if distance < self.targetRadius:
             return None
-
-        # If we are outside the slowRadius, then move at max speed.
+        # Si estamos fuera del slowRadius, la velocidad objetivo es máxima.
         if distance > self.slowRadius:
             targetSpeed = self.maxSpeed
-        # Otherwise calculate a scaled speed.
+        # Si estamos dentro del slowRadius, la velocidad objetivo se ajusta para desacelerar.
         else:
             targetSpeed = self.maxSpeed * distance / self.slowRadius
 
-        # The target velocity combines speed and direction.
+        # La velocidad objetivo combina dirección y magnitud.
         targetVelocity = direction
         targetVelocity.normalize()
         targetVelocity *= targetSpeed
-
-        # Acceleration tries to get to the target velocity.
+        # La aceleración intenta llegar a la velocidad objetivo.
         result.linear = targetVelocity - self.character.velocity
+        # Ajustar la aceleración en función del tiempo objetivo.
         result.linear /= self.timeToTarget
-
-        # Check if the acceleration is too fast.
+        # Verificar si la aceleración es demasiado rápida y si lo es ajustarla.
         if result.linear.length() > self.maxAcceleration:
             result.linear.normalize()
             result.linear *= self.maxAcceleration
-
+        # No hay rotación en el comportamiento Arrive.
         result.angular = 0
         return result

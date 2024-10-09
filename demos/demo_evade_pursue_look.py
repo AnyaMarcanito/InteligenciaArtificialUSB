@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import math
 
 # Añadir el directorio principal al sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -46,10 +47,10 @@ new_pursue_behavior = Pursue(new_pursue_kinematic, new_evade_kinematic, maxAccel
 new_evade_behavior = Evade(new_evade_kinematic, new_pursue_kinematic, maxAcceleration=500, maxPrediction=0.5, fleeRadius=300)
 
 # Asignar comportamientos de orientación
-pursue_look_behavior = LookWhereYoureGoing(pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
-evade_look_behavior = LookWhereYoureGoing(evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
-new_pursue_look_behavior = LookWhereYoureGoing(new_pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
-new_evade_look_behavior = LookWhereYoureGoing(new_evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, timeToTarget=0.1)
+pursue_look_behavior = LookWhereYoureGoing(pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, maxSpeed=100, timeToTarget=0.1)
+evade_look_behavior = LookWhereYoureGoing(evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, maxSpeed=100, timeToTarget=0.1)
+new_pursue_look_behavior = LookWhereYoureGoing(new_pursue_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, maxSpeed=100, timeToTarget=0.1)
+new_evade_look_behavior = LookWhereYoureGoing(new_evade_kinematic, maxAngularAcceleration=10, maxRotation=5, targetRadius=0.1, slowRadius=1, maxSpeed=100, timeToTarget=0.1)
 
 # Combinar comportamientos de movimiento y orientación
 pursue_combined_behavior = CombinedBehavior([pursue_behavior, pursue_look_behavior])
@@ -58,12 +59,33 @@ new_pursue_combined_behavior = CombinedBehavior([new_pursue_behavior, new_pursue
 new_evade_combined_behavior = CombinedBehavior([new_evade_behavior, new_evade_look_behavior])
 
 personajes = [
-    (pursue_kinematic, pursue_image, pursue_combined_behavior),
-    (evade_kinematic, evade_image, evade_combined_behavior),
-    (new_pursue_kinematic, new_pursue_image, new_pursue_combined_behavior),
-    (new_evade_kinematic, new_evade_image, new_evade_combined_behavior),
-    (player_kinematic, player_image, None) 
+    (pursue_kinematic, pursue_image, pursue_combined_behavior, '#ffb700'),
+    (evade_kinematic, evade_image, evade_combined_behavior, '#0e1cb1'),
+    (new_pursue_kinematic, new_pursue_image, new_pursue_combined_behavior, (0, 0, 255)),
+    (new_evade_kinematic, new_evade_image, new_evade_combined_behavior, '#ff00d9'), 
+    (player_kinematic, player_image, None, None) 
 ]
+
+# Función para dibujar un triángulo isósceles
+def dibujar_triangulo(pantalla, color, kinematic):
+    # Si el color es None, no dibujar nada
+    if color is None:
+        return
+
+    x, y = kinematic.position.x, kinematic.position.y
+    orientation = kinematic.orientation
+
+    # Definir los vértices del triángulo
+    size = 20
+    half_size = size / 2
+    points = [
+        (x + math.cos(orientation) * size, y + math.sin(orientation) * size),
+        (x + math.cos(orientation + 2.5) * half_size, y + math.sin(orientation + 2.5) * half_size),
+        (x + math.cos(orientation - 2.5) * half_size, y + math.sin(orientation - 2.5) * half_size)
+    ]
+
+    # Dibujar el triángulo
+    pygame.draw.polygon(pantalla, color, points)
 
 # Iniciar el bucle del juego
 def game_loop(pantalla, background, personajes, width, height, fps):
@@ -79,16 +101,14 @@ def game_loop(pantalla, background, personajes, width, height, fps):
         pantalla.blit(background, (0, 0))
         pantalla.blit(frame, (0, 0))
 
-        # Dibujar el círculo alrededor del jugador
-        # pygame.draw.circle(pantalla, (0, 0, 0), (int(player_kinematic.position.x), int(player_kinematic.position.y)), 300, 1)
-
-        for kinematic, image, behavior in personajes:
+        for kinematic, image, behavior, color in personajes:
             if behavior:
                 steering = behavior.getSteering()
                 if steering:
                     kinematic.update_with_steering(steering, maxSpeed=500, time=1/fps)  # Asegúrate de pasar maxSpeed
             verificar_colisiones_con_bordes(kinematic, width, height)
             pantalla.blit(image, (kinematic.position.x, kinematic.position.y))
+            dibujar_triangulo(pantalla, color, kinematic)
 
         pygame.display.flip()
         clock.tick(fps)

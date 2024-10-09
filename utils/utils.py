@@ -2,11 +2,13 @@ import math
 import pygame
 from vector import Vector
 
+# Función para mapear un valor a un rango específico (entre -pi y pi)
 def mapToRange(rotation):
     rotation = rotation % (2 * math.pi)
     if rotation > math.pi:
         rotation -= 2 * math.pi
     return rotation
+
 # Función para actualizar la posición del jugador con el mouse
 def actualizar_posicion_jugador(evento, jugador):
     if evento.type == pygame.MOUSEMOTION:

@@ -1,5 +1,5 @@
 import pygame
-from visuals import cargar_imagen
+from unusedFiles.visuals import cargar_imagen
 
 def cargar_imagenes():
     # Versiones de Sakura

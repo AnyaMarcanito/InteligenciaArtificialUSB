@@ -1,8 +1,8 @@
 import random
 from vector import Vector
-from steering_output import SteeringOutput
 import math
 
+# Clases Cinemáticas 
 class Kinematic:
     def __init__(self, position, orientation, velocity, rotation):
         self.position = position
@@ -17,20 +17,16 @@ class Kinematic:
         self.rotation += steering.rotation * time
 
     def update_with_steering(self, steering, maxSpeed, time):
-        # Update the position and orientation.
         self.position += self.velocity * time
         self.orientation += self.rotation * time
 
-        # Update the velocity and rotation.
         self.velocity += steering.linear * time
         self.rotation += steering.angular * time
 
-        # Check for speeding and clip.
         if self.velocity.length() > maxSpeed:
             self.velocity.normalize()
             self.velocity *= maxSpeed
 
-        # Actualizar la orientación del personaje
         self.orientation = self.newOrientation(self.orientation, self.velocity)
 
     @staticmethod
@@ -44,6 +40,7 @@ class Kinematic:
     def orientationToVector(orientation):
         return Vector(math.cos(orientation), math.sin(orientation))
 
+# Clases de comportamiento cinemático
 class KinematicSteeringOutput:
     def __init__(self, velocity=None, rotation=0):
         self.velocity = velocity if velocity is not None else Vector(0, 0)
@@ -113,8 +110,8 @@ class KinematicFlee:
         direction = self.character.position - self.target.position
         distance = direction.length()
         if distance > self.fleeRadius:
-            result.velocity = Vector(0, 0)  # Detener el movimiento si está fuera del fleeRadius
-            self.character.velocity = Vector(0, 0)  # Asegurarse de que la velocidad del personaje sea cero
+            result.velocity = Vector(0, 0)
+            self.character.velocity = Vector(0, 0)
         else:
             direction.normalize()
             result.velocity = direction * self.maxSpeed

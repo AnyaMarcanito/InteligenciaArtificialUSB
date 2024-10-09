@@ -1,42 +1,58 @@
-from typing import List
-from kinematic import Kinematic
 from steering_output import SteeringOutput
-from vector import Vector
 
 class Separation:
-    def __init__(self, character: Kinematic, targets: List[Kinematic], player: Kinematic, maxAcceleration: float, threshold: float, decayCoefficient: float, timeToTarget: float = 0.1):
-        self.character: Kinematic = character
-        self.targets: List[Kinematic] = targets
-        self.player: Kinematic = player
-        self.maxAcceleration: float = maxAcceleration
-        self.threshold: float = threshold
-        self.decayCoefficient: float = decayCoefficient
-        self.timeToTarget: float = timeToTarget
+    """
+    Comportamiento de separación para un personaje para evitar el hacinamiento manteniendo una distancia de otros objetivos.
+    Atributos:
+        character: Kinematic
+            El personaje que está realizando la separación.
+        targets: List[Kinematic]
+            La lista de objetivos a evitar.
+        player: Kinematic
+            El jugador cuya velocidad se debe igualar.
+        maxAcceleration: float
+            La aceleración máxima que el personaje puede alcanzar.
+        threshold: float
+            La distancia dentro de la cual se activa el comportamiento de separación.
+        decayCoefficient: float
+            El coeficiente utilizado para calcular la fuerza de separación.
+        timeToTarget: float
+            El tiempo durante el cual el personaje iguala la velocidad del jugador.
+    Métodos:
+        getSteering() -> SteeringOutput:
+            Calcula y devuelve la salida de dirección para el comportamiento de separación.
+    """
+    def __init__(self, character, targets, player, maxAcceleration, threshold, decayCoefficient, timeToTarget = 0.1):
+        self.character= character
+        self.targets = targets
+        self.player= player
+        self.maxAcceleration = maxAcceleration
+        self.threshold= threshold
+        self.decayCoefficient = decayCoefficient
+        self.timeToTarget= timeToTarget
 
     def getSteering(self) -> SteeringOutput:
         steering: SteeringOutput = SteeringOutput()
-        # Use Velocity Match behavior to match the player velocity
+        # Igualar la velocidad del personaje con la del jugador.
         steering.linear = self.player.velocity
+        # Ajustar la aceleración en función del tiempo objetivo
         steering.linear /= self.timeToTarget
-
+        # Verificar si la aceleración es demasiado rápida y si lo es ajustarla.
         if steering.linear.length() > self.maxAcceleration:
             steering.linear = steering.linear.normalize() * self.maxAcceleration
-
+        # Asegurarse de que la aceleración angular sea 0.
         steering.angular = 0
-
-        # Calculate the separation for each target
+        # Iterar sobre los objetivos y calcular la separación.
         for target in self.targets:
-            # Check if the target is close
-            direction: Vector = self.character.position - target.position 
-            distance: float = direction.length()
-
-            # If the target is close, calculate the separation
+            # Calcular la dirección y la distancia al objetivo.
+            direction = self.character.position - target.position 
+            distance = direction.length()
+            # Si el objetivo está dentro del radio de separación, calcular la fuerza de separación
             if distance < self.threshold:
-                # Calculate the strength of the separation with the decay coefficient
-                strength: float = min(self.decayCoefficient / (distance ** 2) if distance != 0 else 0, self.maxAcceleration)
-                # Calculate the direction of the separation
+                # Calcular la fuerza de separación
+                strength = min(self.decayCoefficient / (distance ** 2) if distance != 0 else 0, self.maxAcceleration)
+                # Calcular la dirección de la fuerza de separación y normalizarla
                 direction = direction.normalize()
-                # Add the separation to the steering
+                # Añadir la fuerza de separación a la aceleración lineal
                 steering.linear += direction * strength
-
         return steering
